@@ -1,7 +1,5 @@
-
-
 {
-  "homepage":"https://pibarel27.github.io/DESAM/",
+  "homepage": "https://pibarel27.github.io/DESAM/",
   "name": "desam",
   "version": "0.1.0",
   "private": true,
@@ -14,6 +12,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "emailjs-com": "^3.2.0",
+    "gh-pages": "^6.1.1",
     "glightbox": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,8 +27,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "predeploy":"npm run build",
-    "deply":"gh-pages -d build",
+    "predeploy": "npm run build",
+    "deply": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
