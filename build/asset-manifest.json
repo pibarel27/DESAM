@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/pibarel27/DESAM.git/static/css/main.89836196.css",
+    "main.css": "/pibarel27/DESAM.git/static/css/main.ac39b981.css",
     "main.js": "/pibarel27/DESAM.git/static/js/main.34716d9c.js",
     "static/css/944.743544b0.chunk.css": "/pibarel27/DESAM.git/static/css/944.743544b0.chunk.css",
     "static/js/944.a36fe7bd.chunk.js": "/pibarel27/DESAM.git/static/js/944.a36fe7bd.chunk.js",
@@ -31,7 +31,7 @@
     "static/media/nila.png": "/pibarel27/DESAM.git/static/media/nila.5faf09a7795d28bf5a2b.png",
     "static/media/somorjit.png": "/pibarel27/DESAM.git/static/media/somorjit.6497647e4b477359a04c.png",
     "index.html": "/pibarel27/DESAM.git/index.html",
-    "main.89836196.css.map": "/pibarel27/DESAM.git/static/css/main.89836196.css.map",
+    "main.ac39b981.css.map": "/pibarel27/DESAM.git/static/css/main.ac39b981.css.map",
     "main.34716d9c.js.map": "/pibarel27/DESAM.git/static/js/main.34716d9c.js.map",
     "944.743544b0.chunk.css.map": "/pibarel27/DESAM.git/static/css/944.743544b0.chunk.css.map",
     "944.a36fe7bd.chunk.js.map": "/pibarel27/DESAM.git/static/js/944.a36fe7bd.chunk.js.map",
@@ -44,7 +44,7 @@
     "532.a7412d39.chunk.css.map": "/pibarel27/DESAM.git/static/css/532.a7412d39.chunk.css.map"
   },
   "entrypoints": [
-    "static/css/main.89836196.css",
+    "static/css/main.ac39b981.css",
     "static/js/main.34716d9c.js"
   ]
 }
