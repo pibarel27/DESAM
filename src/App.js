@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 const Home = lazy(() => import("./ui/Home"));
@@ -17,8 +17,8 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="services" element={<Service />} />
             <Route path="careers" element={<Career />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="*" element={<Home />} />       
+            <Route path="contact" element={<Contact />} /> 
+            <Route path="*" element={<Navigate to="/" />} />       
           </Routes>
         </Suspense>
       </Router> 

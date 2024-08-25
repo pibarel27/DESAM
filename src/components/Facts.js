@@ -14,7 +14,7 @@ const Facts = () => {
               </div>
               <div className="row counters">
                 <div className="col-lg-4 col-6 text-center">
-                  <span  className="purecounter">5</span>
+                  <span  className="purecounter">6</span>
                   <h3> BRANCH </h3>
                 </div>
                 <div className="col-lg-4 col-6 text-center">
