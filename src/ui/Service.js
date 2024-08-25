@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import education from "../img/education-bg.png";
 import media from "../img/media.png";
 import games from "../img/games-bg.png";
@@ -7,12 +8,11 @@ import InnerHeaderBanner from "../components/InnerHeaderBanner";
 import InnerHeader from "../components/InnerHeader";
 import Footer from "../components/Footer";
 import serviceHeader from '../img/services-header.jpg'
-
 const Service = () => {
   return (
     <>
       <InnerHeader />
-      <InnerHeaderBanner name={"Services"} img = {serviceHeader}/>
+      <InnerHeaderBanner name={"Services"} img={serviceHeader} />
 
       <main id="main">
         <section id="services-list" className="services-list">
@@ -22,7 +22,7 @@ const Service = () => {
                 We are a
                 <span style={{ color: "#155bd5" }}> STUDENTS ORGANIZATION</span> in
                 Manipur, offer Services across Educational Content,
-                Entertainment Content, Games and sports
+                Entertainment Content, Games, and sports
               </h2>
             </div>
 
@@ -52,9 +52,13 @@ const Service = () => {
                   <i className="bi bi-book" style={{ color: "#f57813" }}></i>
                 </div>
                 <div>
-                  <h4 className="title"> Educational Content </h4>
-                  <p className="description">  
-                  #CUET_PG_ENTRANCE_TEST_2024 State asidagi CUET PG -2024 da saruk yagadaba Maheiroising mapan lamda Centre pirakpadagi entrance thaba phangaroidra haibagi pakhatnaba adu State asida nouna centre piraga pangthoklagani #Meeyamgi_DESAM..
+                  <h4 className="title">
+                    <Link to="./Service/educational" className="text-decoration-none">
+                      Educational Content
+                    </Link>
+                  </h4>
+                  <p className="description">
+                    #CUET_PG_ENTRANCE_TEST_2024 State asidagi CUET PG -2024 da saruk yagadaba Maheiroising mapan lamda Centre pirakpadagi entrance thaba phangaroidra haibagi pakhatnaba adu State asida nouna centre piraga pangthoklagani #Meeyamgi_DESAM..
                   </p>
                 </div>
               </div>
@@ -77,17 +81,18 @@ const Service = () => {
                   ></i>
                 </div>
                 <div>
-                  <h4 className="title"> Entertainment Content </h4>
+                  <h4 className="title">
+                    <Link to="/entertainment-content" className="text-decoration-none">
+                      Entertainment Content
+                    </Link>
+                  </h4>
                   <p className="description">
-                  DESAM na chahi khudinggi pangthokoa paomising ekai khumnana  pukmen paomennabagi thouram 
+                    DESAM na chahi khudinggi pangthokoa paomising ekai khumnana pukmen paomennabagi thouram 
                     <span className="fw-bold">
-                      
-                    MEET THE MEDIA FRATERNITY gi thouram pangthokkhre. 
-
+                      MEET THE MEDIA FRATERNITY gi thouram pangthokkhre.
                     </span>
                     "Paomigi Achumba Paodamgi Khut ee na Tunglamchatki Maion Leplasanu"
                   </p>
-                
                 </div>
               </div>
 
@@ -102,11 +107,11 @@ const Service = () => {
           </div>
         </section>
 
-        <section className="services-list ">
+        <section className="services-list">
           <div className="container" id="Games">
-            <div className="row gy-5  align-items-center">
+            <div className="row gy-5 align-items-center">
               <div
-                className="col-lg-5 col-md-6 service-item "
+                className="col-lg-5 col-md-6 service-item"
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
@@ -125,7 +130,11 @@ const Service = () => {
                   ></i>
                 </div>
                 <div>
-                  <h4 className="title"> Games </h4>
+                  <h4 className="title">
+                    <Link to="/games" className="text-decoration-none">
+                      Games
+                    </Link>
+                  </h4>
                   <p className="description">
                     Get access to a bunch of games ranging from Action,
                     Adventure, Arcade, Board, Cards, Casino ... and many to play
@@ -157,10 +166,13 @@ const Service = () => {
                   ></i>
                 </div>
                 <div>
-                  <h4 className="title"> Sports </h4>
+                  <h4 className="title">
+                    <Link to="/sports" className="text-decoration-none">
+                      Sports
+                    </Link>
+                  </h4>
                   <p className="description">
-                  1st DESAM 7 A SIDE WOMEN FRIENDSHIP FOOTBALL TOURNAMENT 2023.
-
+                    1st DESAM 7 A SIDE WOMEN FRIENDSHIP FOOTBALL TOURNAMENT 2023.
                   </p>
                 </div>
               </div>

@@ -104,7 +104,10 @@ const Footer = () => {
                 </script>
               </span>
               &copy;  Copyright
-              <span> DESAM</span>. All Rights Reserved
+              <span> DESAM</span>. All Rights Reserved. 
+              <div>
+                <a href="https://pibarel.vercel.app">Developed by Pibarel Maisnam</a>
+              </div>
             </div>
           </div>
         </div>
