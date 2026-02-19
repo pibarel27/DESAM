@@ -1,19 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import desam from "../img/desam.png";
 import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes, FaMoon, FaSun, FaChevronDown } from "react-icons/fa";
+import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
 import { animateScroll as scroll } from "react-scroll";
 
 const InnerHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const location = useLocation();
   const splitLocation = location.pathname.split("/");
-
-  // Ref for the whole header
   const headerRef = useRef(null);
 
   const toTop = () => {
@@ -39,10 +36,9 @@ const InnerHeader = () => {
     }
   }, [darkMode]);
 
-  // Close menus on route change
+  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
-    setDropdownOpen(false);
   }, [location]);
 
   // Auto close when clicking outside
@@ -50,7 +46,6 @@ const InnerHeader = () => {
     const handleClickOutside = (event) => {
       if (headerRef.current && !headerRef.current.contains(event.target)) {
         setIsOpen(false);
-        setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -72,6 +67,7 @@ const InnerHeader = () => {
             <Link to="/" className={splitLocation[1] === "" ? "active" : ""}>
               Home
             </Link>
+
             <Link
               to="/about"
               className={splitLocation[1] === "about" ? "active" : ""}
@@ -79,22 +75,28 @@ const InnerHeader = () => {
               About Us
             </Link>
 
-            {/* Dropdown */}
-            <div className="dropdown">
-              <Link to="/services">
-                Services <FaChevronDown size={12} />
-              </Link>
-              <div className="dropdown-menu">
-                <Link to="/web">Web Development</Link>
-                <Link to="/design">UI/UX Design</Link>
-                <Link to="/marketing">Digital Marketing</Link>
-              </div>
-            </div>
+            <Link
+              to="/services"
+              className={splitLocation[1] === "services" ? "active" : ""}
+            >
+              Services
+            </Link>
 
-            <Link to="/careers">Careers</Link>
-            <Link to="/contact">Contact Us</Link>
+            <Link
+              to="/careers"
+              className={splitLocation[1] === "careers" ? "active" : ""}
+            >
+              Careers
+            </Link>
+
+            <Link
+              to="/contact"
+              className={splitLocation[1] === "contact" ? "active" : ""}
+            >
+              Contact Us
+            </Link>
+
             <Link to="/AdminDashboard">Admin</Link>
-            
           </nav>
 
           <div className="nav-controls">
@@ -110,28 +112,14 @@ const InnerHeader = () => {
 
         {/* Mobile Menu */}
         <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
-          <Link to="/">Home</Link>
-          <Link to="/about">About Us</Link>
-
-          <div
-            className="mobile-dropdown-toggle"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            Services <FaChevronDown size={12} />
-          </div>
-
-          <div className={`mobile-dropdown ${dropdownOpen ? "show" : ""}`}>
-            <Link to="/web">Web Development</Link>
-            <Link to="/design">UI/UX Design</Link>
-            <Link to="/marketing">Digital Marketing</Link>
-          </div>
-
-          <Link to="/careers">Careers</Link>
-          <Link to="/contact">Contact Us</Link>
+          <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
+          <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
+          <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
+          <Link to="/careers" onClick={() => setIsOpen(false)}>Careers</Link>
+          <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
+          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>Admin</Link>
         </div>
       </header>
-
-      {/* ... your existing CSS ... */}
     </>
   );
 };

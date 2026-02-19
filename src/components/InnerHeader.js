@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import desam from "../img/desam.png";
 import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes, FaMoon, FaSun, FaChevronDown } from "react-icons/fa";
+import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
 import { animateScroll as scroll } from "react-scroll";
 
 const InnerHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const location = useLocation();
   const splitLocation = location.pathname.split("/");
-
   const headerRef = useRef(null);
 
   const toTop = () => {
@@ -36,7 +34,6 @@ const InnerHeader = () => {
   // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
-    setDropdownOpen(false);
   }, [location]);
 
   // Close mobile menu if clicked outside
@@ -44,7 +41,6 @@ const InnerHeader = () => {
     const handleClickOutside = (event) => {
       if (headerRef.current && !headerRef.current.contains(event.target)) {
         setIsOpen(false);
-        setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -63,21 +59,9 @@ const InnerHeader = () => {
           <nav className="desktop-nav">
             <Link to="/" className={splitLocation[1] === "" ? "active" : ""}>Home</Link>
             <Link to="/about" className={splitLocation[1] === "about" ? "active" : ""}>About Us</Link>
-
-            {/* Dropdown */}
-            <div className="dropdown">
-              <Link to="/services">
-                Services <FaChevronDown size={12} />
-              </Link>
-              <div className="dropdown-menu">
-                <Link to="/web">Web Development</Link>
-                <Link to="/design">UI/UX Design</Link>
-                <Link to="/marketing">Digital Marketing</Link>
-              </div>
-            </div>
-
-            <Link to="/careers">Careers</Link>
-            <Link to="/contact">Contact Us</Link>
+            <Link to="/services" className={splitLocation[1] === "services" ? "active" : ""}>Services</Link>
+            <Link to="/careers" className={splitLocation[1] === "careers" ? "active" : ""}>Careers</Link>
+            <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>Contact Us</Link>
             <Link to="/AdminDashboard">Admin</Link>
           </nav>
 
@@ -96,58 +80,168 @@ const InnerHeader = () => {
         <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
           <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
           <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
-
-          <div
-            className="mobile-dropdown-toggle"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            Services <FaChevronDown size={12} />
-          </div>
-
-          <div className={`mobile-dropdown ${dropdownOpen ? "show" : ""}`}>
-            <Link to="/web" onClick={() => setIsOpen(false)}>Web Development</Link>
-            <Link to="/design" onClick={() => setIsOpen(false)}>UI/UX Design</Link>
-            <Link to="/marketing" onClick={() => setIsOpen(false)}>Digital Marketing</Link>
-          </div>
-
+          <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
           <Link to="/careers" onClick={() => setIsOpen(false)}>Careers</Link>
           <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
           <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>Admin</Link>
         </div>
       </header>
 
-      {/* Styles remain the same */}
       <style>{`
-        body { margin:0; transition:0.3s ease; }
-        body.dark-mode { background:#121212; color:white; }
-        .header { position:fixed; width:100%; backdrop-filter:blur(15px); background:rgba(255,255,255,0.8); transition:all 0.3s ease; z-index:1000; }
-        body.dark-mode .header { background:rgba(20,20,20,0.9); }
-        .sticky { box-shadow:0 4px 20px rgba(0,0,0,0.15); padding:5px 0; }
-        .nav-container { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; transition:0.3s ease; }
-        .logo-img { max-width:150px; max-height:50px; transition:0.3s ease; }
-        .desktop-nav { display:flex; gap:25px; align-items:center; }
-        .desktop-nav a { text-decoration:none; color:inherit; font-weight:500; transition:0.3s; }
-        .desktop-nav a:hover { color:#0d6efd; }
-        .active { color:#0d6efd; font-weight:bold; }
-        .dropdown { position:relative; }
-        .dropdown-menu { position:absolute; top:35px; left:0; min-width:180px; background:rgba(255,255,255,0.95); backdrop-filter:blur(15px); border-radius:8px; opacity:0; transform:translateY(10px); pointer-events:none; transition:0.3s ease; }
-        body.dark-mode .dropdown-menu { background:rgba(20,20,20,0.95); }
-        .dropdown:hover .dropdown-menu { opacity:1; transform:translateY(0); pointer-events:auto; }
-        .dropdown-menu a { display:block; padding:12px 15px; }
-        .dropdown-menu a:hover { background: rgba(13,110,253,0.1); }
-        .nav-controls { display:flex; align-items:center; }
-        .icon-btn { background:none; border:none; font-size:18px; cursor:pointer; margin-right:10px; }
-        .hamburger { display:none; background:none; border:none; font-size:22px; cursor:pointer; }
-        .mobile-menu { display:none; flex-direction:column; background:rgba(255,255,255,0.95); position:absolute; width:100%; top:80px; transform:translateY(-120%); transition:0.4s ease; }
-        body.dark-mode .mobile-menu { background:rgba(20,20,20,0.95); }
-        .mobile-menu.open { display:flex; transform:translateY(0); }
-        .mobile-menu a, .mobile-dropdown-toggle { padding:15px; text-decoration:none; color:inherit; border-bottom:1px solid rgba(0,0,0,0.1); cursor:pointer; }
-        .mobile-dropdown { max-height:0; overflow:hidden; flex-direction:column; background: rgba(0,0,0,0.05); transition:max-height 0.4s ease,padding 0.3s ease; }
-        body.dark-mode .mobile-dropdown { background: rgba(255,255,255,0.05); }
-        .mobile-dropdown.show { max-height:300px; display:flex; }
-        .mobile-dropdown a { padding-left:30px; }
-        @media (max-width:768px){ .desktop-nav{display:none;} .hamburger{display:block;} }
-      `}</style>
+  body { margin:0; transition:0.3s ease; }
+  body.dark-mode { background:#121212; color:white; }
+  body.menu-open { overflow: hidden; }
+
+  .header {
+    position:fixed;
+    width:100%;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.8);
+    transition:all 0.3s ease;
+    z-index:1000;
+  }
+
+  body.dark-mode .header {
+    background:rgba(20,20,20,0.9);
+  }
+
+  .sticky {
+    box-shadow:0 4px 20px rgba(0,0,0,0.15);
+    padding:5px 0;
+  }
+
+  .nav-container {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+  }
+
+  .logo-img {
+    max-width:150px;
+    max-height:50px;
+  }
+
+  .desktop-nav {
+    display:flex;
+    gap:25px;
+    align-items:center;
+  }
+
+  .desktop-nav a {
+    text-decoration:none;
+    color:inherit;
+    font-weight:500;
+    transition:0.3s;
+  }
+
+  .desktop-nav a:hover {
+    color:#0d6efd;
+  }
+
+  .active {
+    color:#0d6efd;
+    font-weight:bold;
+  }
+
+  .nav-controls {
+    display:flex;
+    align-items:center;
+  }
+
+  .icon-btn {
+    background:none;
+    border:none;
+    font-size:18px;
+    cursor:pointer;
+    margin-right:10px;
+  }
+
+  .hamburger {
+    display:none;
+    background:none;
+    border:none;
+    font-size:22px;
+    cursor:pointer;
+  }
+
+  /* Overlay */
+  .overlay {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+    opacity:0;
+    visibility:hidden;
+    transition:0.3s ease;
+    z-index:900;
+  }
+
+  .overlay.show {
+    opacity:1;
+    visibility:visible;
+  }
+
+  /* Animated Mobile Menu */
+  .mobile-menu {
+    position:fixed;
+    top:0;
+    right:0;
+    width:270px;
+    height:100vh;
+    background:rgba(255,255,255,0.98);
+    backdrop-filter:blur(20px);
+    display:flex;
+    flex-direction:column;
+    padding-top:90px;
+    transform:translateX(100%);
+    transition:transform 0.4s cubic-bezier(.77,0,.18,1);
+    box-shadow:-10px 0 30px rgba(0,0,0,0.1);
+    z-index:1001;
+  }
+
+  body.dark-mode .mobile-menu {
+    background:rgba(20,20,20,0.98);
+  }
+
+  .mobile-menu.open {
+    transform:translateX(0);
+  }
+
+  /* Stagger Animation */
+  .mobile-menu a {
+    padding:18px 25px;
+    text-decoration:none;
+    color:inherit;
+    opacity:0;
+    transform:translateX(20px);
+    transition:all 0.4s ease;
+  }
+
+  .mobile-menu.open a {
+    opacity:1;
+    transform:translateX(0);
+  }
+
+  .mobile-menu.open a:nth-child(1) { transition-delay:0.1s; }
+  .mobile-menu.open a:nth-child(2) { transition-delay:0.15s; }
+  .mobile-menu.open a:nth-child(3) { transition-delay:0.2s; }
+  .mobile-menu.open a:nth-child(4) { transition-delay:0.25s; }
+  .mobile-menu.open a:nth-child(5) { transition-delay:0.3s; }
+  .mobile-menu.open a:nth-child(6) { transition-delay:0.35s; }
+
+  .mobile-menu a:hover {
+    background:rgba(13,110,253,0.1);
+  }
+
+  @media (max-width:768px){
+    .desktop-nav{display:none;}
+    .hamburger{display:block;}
+  }
+`}</style>
+
     </>
   );
 };
