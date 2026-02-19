@@ -82,7 +82,7 @@ const Footer = () => {
                 <h4>Contact Us</h4>
                 <address>
                  
-                Kwakeithel Junior Boys High School, <br /> Kwakeithel Bazar, <br /> Imphal West, Manipur <br />
+                Keishampat, Junction, <br /> Imphal West, Manipur <br />
                   <br />
                   <strong>Phone:</strong>+917005291834<br />
                   <strong>Email:</strong>  

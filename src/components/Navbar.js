@@ -1,114 +1,240 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
-  const { pathname } = location;
-  const splitLocation = pathname.split("/");
-  const menuRef = useRef(null);
+  const navbarRef = useRef(null);
 
-  // Close the menu when clicking outside of it
+  const splitLocation = location.pathname.split("/");
+
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setIsOpen(false);
+        setDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const navbarStyle = {
-    position: 'relative',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    width: '100%',
-    transition: 'width 0.3s ease-in-out',
-    margin: '0 auto'
-  };
-
-  const sectionStyle = {
-    width: isOpen ? '90%' : '100%', // Narrower section width when open
-    transition: 'width 0.3s ease-in-out',
-    margin: '0 auto',
-    padding: '0 10px', // Reduce padding when menu is open
-  };
-
-  const navLinksStyle = {
-    display: 'flex',
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    position: 'absolute',
-    top: '60px', // Adjust based on your navbar height
-    right: 0,
-    width: '100%',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    transition: 'transform 0.3s ease-in-out',
-    transform: isOpen ? 'translateY(0)' : 'translateY(-100%)',
-    fontSize: isOpen ? '14px' : '18px', // Smaller font size when open
-  };
-
-  const navLinkStyle = {
-    padding: '10px',
-    textDecoration: 'none',
-    color: '#333',
-  };
-
-  const activeStyle = {
-    fontWeight: 'bold',
-    color: '#007BFF',
-  };
-
-  const hamburgerStyle = {
-    display: 'block', // Show hamburger button on small screens
-    fontSize: '24px',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    margin: '10px'
-  };
-
-  // Adjust styles based on screen size
-  const mediaQuery = window.matchMedia('(width: 60px)');
-  if (mediaQuery.matches) {
-    // Mobile screen styles
-  }
+  // Close on route change
+  useEffect(() => {
+    setIsOpen(false);
+    setDropdownOpen(false);
+  }, [location]);
 
   return (
-    <nav id="navbar" style={navbarStyle}>
-      <button style={hamburgerStyle} onClick={toggleMenu}>
-        ☰
-      </button>
-      <section style={sectionStyle}>
-        <ul ref={menuRef} style={navLinksStyle}>
-          <li>
-            <Link to="/" style={{ ...navLinkStyle, ...(splitLocation[1] === "" ? activeStyle : {}) }}>Home</Link>
-          </li>
-          <li>
-            <Link to="/about" style={{ ...navLinkStyle, ...(splitLocation[1] === "about" ? activeStyle : {}) }}>About Us</Link>
-          </li>
-          <li>
-            <Link to="/services" style={{ ...navLinkStyle, ...(splitLocation[1] === "services" ? activeStyle : {}) }}>Services</Link>
-          </li>
-          <li>
-            <Link to="/careers" style={{ ...navLinkStyle, ...(splitLocation[1] === "careers" ? activeStyle : {}) }}>Careers</Link>
-          </li>
-          <li>
-            <Link to="/contact" style={{ ...navLinkStyle, ...(splitLocation[1] === "contact" ? activeStyle : {}) }}>Contact Us</Link>
-          </li>
-        </ul>
-      </section>
-    </nav>
+    <>
+      <style>{`
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background: #f4f6f9;
+          color: #111;
+        }
+
+        .navbar {
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          backdrop-filter: blur(15px);
+          background: rgba(255,255,255,0.95);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 20px;
+        }
+
+        .logo {
+          font-weight: bold;
+          font-size: 20px;
+          text-decoration: none;
+          color: inherit;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 25px;
+          list-style: none;
+        }
+
+        .nav-links li {
+          position: relative;
+        }
+
+        .nav-links a {
+          text-decoration: none;
+          color: inherit;
+          transition: 0.3s ease;
+        }
+
+        .nav-links a:hover {
+          color: #0d6efd;
+        }
+
+        .active {
+          font-weight: bold;
+          color: #0d6efd !important;
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 40px;
+          left: 0;
+          min-width: 180px;
+          background: rgba(255,255,255,0.95);
+          backdrop-filter: blur(15px);
+          border-radius: 8px;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(10px);
+          pointer-events: none;
+          transition: all 0.3s ease;
+        }
+
+        .nav-links li:hover .dropdown-menu {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: auto;
+        }
+
+        .dropdown-menu a {
+          display: block;
+          padding: 12px 15px;
+        }
+
+        .dropdown-menu a:hover {
+          background: rgba(13,110,253,0.1);
+        }
+
+        .hamburger {
+          display: none;
+          font-size: 22px;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
+
+        .mobile-menu {
+          position: fixed;
+          top: 0;
+          right: 0;
+          height: 100vh;
+          width: 260px;
+          background: rgba(255,255,255,0.95);
+          backdrop-filter: blur(20px);
+          transform: translateX(100%);
+          transition: transform 0.4s ease;
+          display: flex;
+          flex-direction: column;
+          padding-top: 80px;
+          box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .mobile-menu.open {
+          transform: translateX(0);
+        }
+
+        .mobile-menu a, .mobile-toggle {
+          padding: 15px 20px;
+          text-decoration: none;
+          color: inherit;
+          cursor: pointer;
+        }
+
+        .mobile-dropdown {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.4s ease;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mobile-dropdown.show {
+          max-height: 300px;
+        }
+
+        .mobile-dropdown a {
+          padding-left: 35px;
+        }
+
+        .rotate {
+          transform: rotate(180deg);
+          transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+          .nav-links {
+            display: none;
+          }
+          .hamburger {
+            display: block;
+          }
+        }
+      `}</style>
+
+      <nav ref={navbarRef} className="navbar">
+        <div className="container">
+          <Link to="/" className="logo">DESAM</Link>
+
+          <ul className="nav-links">
+            <li>
+              <Link to="/" className={splitLocation[1] === "" ? "active" : ""}>Home</Link>
+            </li>
+            <li>
+              <Link to="/about" className={splitLocation[1] === "about" ? "active" : ""}>About</Link>
+            </li>
+            <li>
+              <Link to="/services">
+                Services <FaChevronDown size={12} />
+              </Link>
+              <div className="dropdown-menu">
+                <Link to="/web">Web Development</Link>
+                <Link to="/design">UI/UX Design</Link>
+                <Link to="/marketing">Digital Marketing</Link>
+              </div>
+            </li>
+            <li>
+              <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>Contact</Link>
+            </li>
+            <li>
+              <Link to="/AdminDashboard" className={splitLocation[1] === "AdminDashboard" ? "active" : ""}>Admin</Link>
+            </li>
+          </ul>
+
+          <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
+
+        <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
+          <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
+          <Link to="/about" onClick={() => setIsOpen(false)}>About</Link>
+
+          <div className="mobile-toggle" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            Services <FaChevronDown size={12} className={dropdownOpen ? "rotate" : ""} />
+          </div>
+          <div className={`mobile-dropdown ${dropdownOpen ? "show" : ""}`}>
+            <Link to="/web" onClick={() => setIsOpen(false)}>Web Development</Link>
+            <Link to="/design" onClick={() => setIsOpen(false)}>UI/UX Design</Link>
+            <Link to="/marketing" onClick={() => setIsOpen(false)}>Digital Marketing</Link>
+          </div>
+
+          <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
+          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>Admin</Link>
+        </div>
+      </nav>
+    </>
   );
-}
+};
 
 export default Navbar;
