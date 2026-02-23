@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+}
+
+main {
+  padding-top: 80px;   /* Same as header height */
+}
+
+/* Mobile adjustment */
+@media (max-width: 768px) {
+  main {
+    padding-top: 80px;
+  }
+}

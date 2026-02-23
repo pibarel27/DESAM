@@ -1,247 +1,234 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import desam from "../img/desam.png";
 import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { animateScroll as scroll } from "react-scroll";
 
-const InnerHeader = () => {
+const InnerHeader = ({ isAuth, setIsAuth }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
 
   const location = useLocation();
   const splitLocation = location.pathname.split("/");
-  const headerRef = useRef(null);
+
+  // ✅ Check login status on load
+ 
+
+  // ✅ Logout Function
+  const handleLogout = () => {
+    localStorage.removeItem("adminAuth");
+    setIsAuth(false);
+  };
 
   const toTop = () => {
     scroll.scrollToTop({ duration: 0 });
     setIsOpen(false);
   };
 
-  // Sticky header
+  // Sticky Header
   useEffect(() => {
-    const handleScroll = () => setIsSticky(window.scrollY > 80);
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 50);
+    };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Dark mode
-  useEffect(() => {
-    if (darkMode) document.body.classList.add("dark-mode");
-    else document.body.classList.remove("dark-mode");
-  }, [darkMode]);
-
-  // Close mobile menu on route change
+  // Close menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // Close mobile menu if clicked outside
+  // Prevent body scroll when mobile menu open
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (headerRef.current && !headerRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+    return () => (document.body.style.overflow = "auto");
+  }, [isOpen]);
 
   return (
     <>
-      <header ref={headerRef} className={`header ${isSticky ? "sticky" : ""}`}>
+      <header className={`header ${isSticky ? "sticky" : ""}`}>
         <div className="nav-container">
+
+          {/* LOGO */}
           <Link to="/" onClick={toTop}>
             <img src={desam} alt="DESAM" className="logo-img" />
           </Link>
 
-          {/* Desktop Nav */}
+          {/* DESKTOP NAV */}
           <nav className="desktop-nav">
             <Link to="/" className={splitLocation[1] === "" ? "active" : ""}>Home</Link>
             <Link to="/about" className={splitLocation[1] === "about" ? "active" : ""}>About Us</Link>
             <Link to="/services" className={splitLocation[1] === "services" ? "active" : ""}>Services</Link>
             <Link to="/careers" className={splitLocation[1] === "careers" ? "active" : ""}>Careers</Link>
             <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>Contact Us</Link>
-            <Link to="/AdminDashboard">Admin</Link>
+
+            {!isAuth && <Link to="/AdminDashboard">Admin</Link>}
+
+            {isAuth && (
+              <button onClick={handleLogout} className="logout-btn">
+                Logout
+              </button>
+            )}
           </nav>
 
-          <div className="nav-controls">
-            <button className="icon-btn" onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? <FaSun /> : <FaMoon />}
-            </button>
+          {/* HAMBURGER */}
+          <button
+            className="hamburger"
+            onClick={() => setIsOpen(prev => !prev)}
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <FaTimes /> : <FaBars />}
+          </button>
 
-            <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
-          <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
-          <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
-          <Link to="/careers" onClick={() => setIsOpen(false)}>Careers</Link>
-          <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
-          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>Admin</Link>
         </div>
       </header>
 
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
+        <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
+        <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
+        <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
+        <Link to="/careers" onClick={() => setIsOpen(false)}>Careers</Link>
+        <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
+
+        {!isAuth && (
+          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>
+            Admin
+          </Link>
+        )}
+
+        {isAuth && (
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "18px 30px",
+              background: "red",
+              color: "#fff",
+              border: "none",
+              textAlign: "left",
+              cursor: "pointer"
+            }}
+          >
+            Logout
+          </button>
+        )}
+      </div>
+
       <style>{`
-  body { margin:0; transition:0.3s ease; }
-  body.dark-mode { background:#121212; color:white; }
-  body.menu-open { overflow: hidden; }
+        body {
+          margin: 0;
+        }
 
-  .header {
-    position:fixed;
-    width:100%;
-    backdrop-filter:blur(15px);
-    background:rgba(255,255,255,0.8);
-    transition:all 0.3s ease;
-    z-index:1000;
-  }
+        .header {
+          position: fixed;
+          top: 0;
+          width: 100%;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          background: rgba(255,255,255,0.95);
+          backdrop-filter: blur(10px);
+          transition: 0.3s ease;
+          z-index: 1000;
+        }
 
-  body.dark-mode .header {
-    background:rgba(20,20,20,0.9);
-  }
+        .sticky {
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
 
-  .sticky {
-    box-shadow:0 4px 20px rgba(0,0,0,0.15);
-    padding:5px 0;
-  }
+        .nav-container {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 20px;
+        }
 
-  .nav-container {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 20px;
-  }
+        .logo-img {
+          height: 45px;
+          object-fit: contain;
+        }
 
-  .logo-img {
-    max-width:150px;
-    max-height:50px;
-  }
+        .desktop-nav {
+          display: flex;
+          gap: 25px;
+          align-items: center;
+        }
 
-  .desktop-nav {
-    display:flex;
-    gap:25px;
-    align-items:center;
-  }
+        .desktop-nav a {
+          text-decoration: none;
+          color: inherit;
+          font-weight: 500;
+          transition: 0.3s;
+        }
 
-  .desktop-nav a {
-    text-decoration:none;
-    color:inherit;
-    font-weight:500;
-    transition:0.3s;
-  }
+        .desktop-nav a:hover,
+        .active {
+          color: #0d6efd;
+          font-weight: 600;
+        }
 
-  .desktop-nav a:hover {
-    color:#0d6efd;
-  }
+        .logout-btn {
+          background: red;
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
 
-  .active {
-    color:#0d6efd;
-    font-weight:bold;
-  }
+        .hamburger {
+          display: none;
+          font-size: 24px;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
 
-  .nav-controls {
-    display:flex;
-    align-items:center;
-  }
+        .mobile-menu {
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: 280px;
+          height: 100vh;
+          background: #fff;
+          display: flex;
+          flex-direction: column;
+          padding-top: 90px;
+          box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+          transform: translateX(100%);
+          transition: transform 0.4s cubic-bezier(.77,0,.18,1);
+          z-index: 1001;
+        }
 
-  .icon-btn {
-    background:none;
-    border:none;
-    font-size:18px;
-    cursor:pointer;
-    margin-right:10px;
-  }
+        .mobile-menu.open {
+          transform: translateX(0);
+        }
 
-  .hamburger {
-    display:none;
-    background:none;
-    border:none;
-    font-size:22px;
-    cursor:pointer;
-  }
+        .mobile-menu a {
+          padding: 18px 30px;
+          text-decoration: none;
+          color: inherit;
+          font-size: 18px;
+          border-bottom: 1px solid rgba(0,0,0,0.05);
+          transition: 0.3s ease;
+        }
 
-  /* Overlay */
-  .overlay {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.4);
-    opacity:0;
-    visibility:hidden;
-    transition:0.3s ease;
-    z-index:900;
-  }
+        .mobile-menu a:hover {
+          background: rgba(13,110,253,0.1);
+        }
 
-  .overlay.show {
-    opacity:1;
-    visibility:visible;
-  }
-
-  /* Animated Mobile Menu */
-  .mobile-menu {
-    position:fixed;
-    top:0;
-    right:0;
-    width:270px;
-    height:100vh;
-    background:rgba(255,255,255,0.98);
-    backdrop-filter:blur(20px);
-    display:flex;
-    flex-direction:column;
-    padding-top:90px;
-    transform:translateX(100%);
-    transition:transform 0.4s cubic-bezier(.77,0,.18,1);
-    box-shadow:-10px 0 30px rgba(0,0,0,0.1);
-    z-index:1001;
-  }
-
-  body.dark-mode .mobile-menu {
-    background:rgba(20,20,20,0.98);
-  }
-
-  .mobile-menu.open {
-    transform:translateX(0);
-  }
-
-  /* Stagger Animation */
-  .mobile-menu a {
-    padding:18px 25px;
-    text-decoration:none;
-    color:inherit;
-    opacity:0;
-    transform:translateX(20px);
-    transition:all 0.4s ease;
-  }
-
-  .mobile-menu.open a {
-    opacity:1;
-    transform:translateX(0);
-  }
-
-  .mobile-menu.open a:nth-child(1) { transition-delay:0.1s; }
-  .mobile-menu.open a:nth-child(2) { transition-delay:0.15s; }
-  .mobile-menu.open a:nth-child(3) { transition-delay:0.2s; }
-  .mobile-menu.open a:nth-child(4) { transition-delay:0.25s; }
-  .mobile-menu.open a:nth-child(5) { transition-delay:0.3s; }
-  .mobile-menu.open a:nth-child(6) { transition-delay:0.35s; }
-
-  .mobile-menu a:hover {
-    background:rgba(13,110,253,0.1);
-  }
-
-  @media (max-width:768px){
-    .desktop-nav{display:none;}
-    .hamburger{display:block;}
-  }
-`}</style>
-
+        @media (max-width: 768px) {
+          .desktop-nav {
+            display: none;
+          }
+          .hamburger {
+            display: block;
+          }
+        }
+      `}</style>
     </>
   );
 };

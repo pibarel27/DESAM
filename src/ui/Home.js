@@ -6,16 +6,20 @@ import Facts from "../components/Facts";
 import ServiceList from "../components/ServiceList";
 import Revenue from "../components/Revenue";
 
-const Home = () => {
+const Home = ({ isAuth, setIsAuth }) => {
+  
   return (
     <>
-      <InnerHeader />
-      <Carousel />
+<InnerHeader isAuth={isAuth} setIsAuth={setIsAuth} />
+
+      <Carousel isAuth={isAuth} />
       <main id="main">
-        <ServiceList/>
-        <Facts/>
-        <Revenue/>
+        <ServiceList isAuth={isAuth} />
+        <Facts isAuth={isAuth} />
+        <Revenue isAuth={isAuth} />
+
       </main>
+
       <Footer />
     </>
   );

@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const splitLocation = location.pathname.split("/");
 
-  // Close on outside click
+  /* Close on outside click */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
@@ -22,165 +22,194 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close on route change
+  /* Close on route change */
   useEffect(() => {
     setIsOpen(false);
     setDropdownOpen(false);
   }, [location]);
 
+  /* Lock body scroll when mobile open */
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   return (
     <>
-      <style>{`
-        body {
-          margin: 0;
-          font-family: Arial, sans-serif;
-          background: #f4f6f9;
-          color: #111;
-        }
+     <style>{`
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+  }
 
-        .navbar {
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          backdrop-filter: blur(15px);
-          background: rgba(255,255,255,0.95);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+  }
 
-        .container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px 20px;
-        }
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+  }
 
-        .logo {
-          font-weight: bold;
-          font-size: 20px;
-          text-decoration: none;
-          color: inherit;
-        }
+  .logo {
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: none;
+    color: #000;
+  }
 
-        .nav-links {
-          display: flex;
-          gap: 25px;
-          list-style: none;
-        }
+  .nav-links {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+  }
 
-        .nav-links li {
-          position: relative;
-        }
+  .nav-links li {
+    position: relative;
+  }
 
-        .nav-links a {
-          text-decoration: none;
-          color: inherit;
-          transition: 0.3s ease;
-        }
+  .nav-links a {
+    text-decoration: none;
+    color: #333;
+    transition: 0.3s ease;
+  }
 
-        .nav-links a:hover {
-          color: #0d6efd;
-        }
+  .nav-links a:hover {
+    color: #0d6efd;
+  }
 
-        .active {
-          font-weight: bold;
-          color: #0d6efd !important;
-        }
+  .active {
+    font-weight: bold;
+    color: #0d6efd !important;
+  }
 
-        .dropdown-menu {
-          position: absolute;
-          top: 40px;
-          left: 0;
-          min-width: 180px;
-          background: rgba(255,255,255,0.95);
-          backdrop-filter: blur(15px);
-          border-radius: 8px;
-          overflow: hidden;
-          opacity: 0;
-          transform: translateY(10px);
-          pointer-events: none;
-          transition: all 0.3s ease;
-        }
+  /* Desktop Dropdown */
+  .dropdown-menu {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    display: none;
+  }
 
-        .nav-links li:hover .dropdown-menu {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: auto;
-        }
+  .nav-links li:hover .dropdown-menu {
+    display: block;
+  }
 
-        .dropdown-menu a {
-          display: block;
-          padding: 12px 15px;
-        }
+  .dropdown-menu a {
+    display: block;
+    padding: 12px 15px;
+  }
 
-        .dropdown-menu a:hover {
-          background: rgba(13,110,253,0.1);
-        }
+  .dropdown-menu a:hover {
+    background: #f2f2f2;
+  }
 
-        .hamburger {
-          display: none;
-          font-size: 22px;
-          background: none;
-          border: none;
-          cursor: pointer;
-        }
+  .hamburger {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
 
-        .mobile-menu {
-          position: fixed;
-          top: 0;
-          right: 0;
-          height: 100vh;
-          width: 260px;
-          background: rgba(255,255,255,0.95);
-          backdrop-filter: blur(20px);
-          transform: translateX(100%);
-          transition: transform 0.4s ease;
-          display: flex;
-          flex-direction: column;
-          padding-top: 80px;
-          box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-        }
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+    z-index: 900;
+  }
 
-        .mobile-menu.open {
-          transform: translateX(0);
-        }
+  .overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
 
-        .mobile-menu a, .mobile-toggle {
-          padding: 15px 20px;
-          text-decoration: none;
-          color: inherit;
-          cursor: pointer;
-        }
+  /* Mobile Menu */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 80%;
+    max-width: 320px;
+    background: #ffffff;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px;
+    border-left: 1px solid #eee;
+    z-index: 1001;
+  }
 
-        .mobile-dropdown {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.4s ease;
-          display: flex;
-          flex-direction: column;
-        }
+  .mobile-menu.open {
+    transform: translateX(0);
+  }
 
-        .mobile-dropdown.show {
-          max-height: 300px;
-        }
+  .mobile-menu a, .mobile-toggle {
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+  }
 
-        .mobile-dropdown a {
-          padding-left: 35px;
-        }
+  .mobile-menu a:hover {
+    background: #f2f2f2;
+  }
 
-        .rotate {
-          transform: rotate(180deg);
-          transition: transform 0.3s ease;
-        }
+  .mobile-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
 
-        @media (max-width: 768px) {
-          .nav-links {
-            display: none;
-          }
-          .hamburger {
-            display: block;
-          }
-        }
-      `}</style>
+  .mobile-dropdown.show {
+    max-height: 300px;
+  }
+
+  .mobile-dropdown a {
+    padding-left: 35px;
+  }
+
+  .rotate {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+    .hamburger {
+      display: block;
+    }
+  }
+`}</style>  
 
       <nav ref={navbarRef} className="navbar">
         <div className="container">
@@ -216,13 +245,28 @@ const Navbar = () => {
           </button>
         </div>
 
+        {/* Overlay */}
+        <div
+          className={`overlay ${isOpen ? "show" : ""}`}
+          onClick={() => setIsOpen(false)}
+        />
+
+        {/* Mobile Menu */}
         <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
           <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
           <Link to="/about" onClick={() => setIsOpen(false)}>About</Link>
 
-          <div className="mobile-toggle" onClick={() => setDropdownOpen(!dropdownOpen)}>
-            Services <FaChevronDown size={12} className={dropdownOpen ? "rotate" : ""} />
+          <div
+            className="mobile-toggle"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            Services{" "}
+            <FaChevronDown
+              size={12}
+              className={dropdownOpen ? "rotate" : ""}
+            />
           </div>
+
           <div className={`mobile-dropdown ${dropdownOpen ? "show" : ""}`}>
             <Link to="/web" onClick={() => setIsOpen(false)}>Web Development</Link>
             <Link to="/design" onClick={() => setIsOpen(false)}>UI/UX Design</Link>
