@@ -28,10 +28,11 @@ function App() {
 
           {/* Public Routes */}   
           <Route path="/" element={<Home isAuth={isAuth} setIsAuth={setIsAuth} />} /> 
-          <Route path="about" element={<About />} />
-          <Route path="services" element={<Service />} />
-          <Route path="careers" element={<Career />} />
-          <Route path="contact" element={<Contact />} />
+          <Route path="about" element={<About isAdmin={isAuth} />} />
+
+          <Route path="services" element={<Service  isAdmin={isAuth}/>} />
+          <Route path="careers" element={<Career isAdmin={isAuth}/>} />
+          <Route path="contact" element={<Contact isAdmin={isAuth}/>} />
 
           {/* ✅ Admin Login Page */}
           <Route

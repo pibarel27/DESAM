@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkdesam=self.webpackChunkdesam||[]).push([[256],{8256(e,s,t){t.r(s),t.d(s,{default:()=>c});var n=t(3216),a=t(579);const c=function(e){let{setIsAuth:s}=e;const t=(0,n.Zp)();return(0,a.jsxs)("div",{children:[(0,a.jsx)("h2",{children:"Admin Dashboard"}),(0,a.jsx)("button",{onClick:()=>{localStorage.removeItem("adminAuth"),s(!1),t("/")},className:"btn btn-danger",children:"Logout"})]})}}}]);
+//# sourceMappingURL=256.85031cff.chunk.js.map
