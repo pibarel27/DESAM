@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import axios from "axios";
 import shapeImg from "../img/img-wave2.png";
 import desam from "../img/header/desam.png";
@@ -16,12 +16,7 @@ const Carousel = ({ isAuth }) => {
   const [editMode, setEditMode] = useState(false);
 
   // ✅ Load data from backend
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/hero")
-      .then(res => {
-        if (res.data) setHero(res.data);
-      });
-  }, []);
+ 
 
   // ✅ Handle input change
   const handleChange = (e) => {
