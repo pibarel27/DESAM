@@ -1,0 +1,2 @@
+"use strict";(globalThis.webpackChunkdesam=globalThis.webpackChunkdesam||[]).push([[256],{8256(e,t,s){s.r(t),s.d(t,{default:()=>l});var a=s(3216),u=s(5043);const l=function(e){let{setIsAuth:t}=e;const s=(0,a.Zp)();return(0,u.useEffect)(()=>{localStorage.removeItem("adminAuth"),t(!1),s("/")},[s,t]),null}}}]);
+//# sourceMappingURL=256.61b9f5f1.chunk.js.map
