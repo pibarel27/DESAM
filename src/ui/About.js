@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import AOS from "aos";
+import { loadAboutFromStorage, saveAboutToStorage } from "./aboutStorage";
 import "aos/dist/aos.css";
 
 import wakat from "../img/wakat.jpg";
@@ -29,42 +29,19 @@ const About = ({ isAdmin }) => {
     });
   }, []);
 
-  // 🔹 Fetch Data From Backend
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/about");
-        if (res.data) {
-          setAboutText(res.data.aboutText || []);
-          setVision(res.data.vision || "");
-          setMission(res.data.mission || "");
-          setValues(res.data.values || "");
-          setTeam(res.data.team || []);
-        }
-      } catch (error) {
-        console.log("Fetch Error:", error);
-      }
-    };
-
-    fetchData();
+    const data = loadAboutFromStorage();
+    setAboutText(data.aboutText);
+    setVision(data.vision);
+    setMission(data.mission);
+    setValues(data.values);
+    setTeam(data.team);
   }, []);
 
-  // 🔹 Save Data To Backend
-  const saveData = async () => {
-    try {
-      await axios.post("http://localhost:5000/api/about", {
-        aboutText,
-        vision,
-        mission,
-        values,
-        team,
-      });
-
-      alert("Saved Successfully!");
-      setEditingSection(null);
-    } catch (error) {
-      console.log("Save Error:", error);
-    }
+  const saveData = () => {
+    saveAboutToStorage({ aboutText, vision, mission, values, team });
+    alert("Saved to this browser.");
+    setEditingSection(null);
   };
 
   const handleAboutChange = (index, value) => {

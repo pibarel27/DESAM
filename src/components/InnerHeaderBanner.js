@@ -24,7 +24,7 @@ const InnerHeader = () => {
   const handleLogout = () => {
     localStorage.removeItem("adminAuth");
     setIsAuth(false);
-    navigate("/AdminDashboard");
+    navigate("/admin");
   };
 
   const toTop = () => {
@@ -92,7 +92,8 @@ const InnerHeader = () => {
               Contact Us
             </Link>
 
-            {!isAuth && <Link to="/AdminDashboard">Admin</Link>}
+            {!isAuth && <Link to="/admin">Admin</Link>}
+            {isAuth && <Link to="/AdminDashboard">Dashboard</Link>}
 
             {isAuth && (
               <button onClick={handleLogout} className="logout-btn">
@@ -130,8 +131,13 @@ const InnerHeader = () => {
         <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
 
         {!isAuth && (
-          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>
+          <Link to="/admin" onClick={() => setIsOpen(false)}>
             Admin
+          </Link>
+        )}
+        {isAuth && (
+          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>
+            Dashboard
           </Link>
         )}
 
