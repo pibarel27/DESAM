@@ -59,16 +59,16 @@ const About = ({ isAdmin }) => {
         {/* ================= ABOUT SECTION ================= */}
         <section className="about">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header" data-aos="fade-down" data-aos-delay="100">
               <h2>Meyamgi Desam</h2>
             </div>
 
             <div className="row gy-4 align-items-center">
-              <div className="col-lg-6">
+              <div className="col-lg-6" data-aos="fade-right" data-aos-delay="150">
                 <img src={wakat} className="img-fluid" alt="About" />
               </div>
 
-              <div className="col-lg-6">
+              <div className="col-lg-6" data-aos="fade-left" data-aos-delay="150">
                 {aboutText.map((line, idx) =>
                   editingSection === "about" ? (
                     <textarea
@@ -117,7 +117,7 @@ const About = ({ isAdmin }) => {
           <div className="container">
             <div className="row gy-4">
               {["Vision", "Mission", "Values"].map((title, index) => (
-                <div className="col-lg-4" key={index}>
+                <div className="col-lg-4" key={index} data-aos="fade-up" data-aos-delay={`${150 + index * 100}`}>
                   <div className="card-item">
                     <div className="card-body">
                       <h4>{title}</h4>
@@ -191,9 +191,9 @@ const About = ({ isAdmin }) => {
 
             <div className="row gy-4">
               {team.map((member, idx) => (
-                <div className="col-lg-6" key={idx}>
+                <div className="col-lg-6" key={idx} data-aos="fade-up" data-aos-delay={`${150 + idx * 100}`}>
                   <div className="row align-items-center">
-                    <div className="col-4">
+                    <div className="col-4" data-aos="zoom-in" data-aos-delay="200">
                       <img
                         src={member.img}
                         className="img-fluid"

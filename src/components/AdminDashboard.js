@@ -25,8 +25,8 @@ function AdminDashboard({ setIsAuth }) {
   return (
     <div className="min-vh-100 d-flex" style={{ background: "#f4f6f9" }}>
       <aside
-        className="bg-white border-end d-flex flex-column"
-        style={{ width: 260, minHeight: "100vh", boxShadow: "1px 0 0 #e9ecef" }}
+        className="admin-dashboard-aside bg-white border-end d-flex flex-column"
+        style={{ width: 260, minHeight: "100vh" }}
       >
         <div className="p-4 border-bottom">
           <div className="fw-bold fs-5 text-dark">DESAM Admin</div>
@@ -55,7 +55,7 @@ function AdminDashboard({ setIsAuth }) {
         </div>
       </aside>
 
-      <main className="flex-grow-1 p-4 p-lg-5 overflow-auto">
+      <main className="admin-dashboard-main flex-grow-1 p-4 p-lg-5 overflow-auto">
         {activeSection === "home" && <HomeEditor />}
         {activeSection === "about" && <AboutEditor />}
         {activeSection === "services" && <ServicesEditor />}

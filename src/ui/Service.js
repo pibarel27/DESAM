@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
 import InnerHeaderBanner from "../components/InnerHeaderBanner";
 import InnerHeader from "../components/InnerHeader";
@@ -13,6 +15,15 @@ const Service = () => {
     setBlocks(loadServicesFromStorage());
   }, []);
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+      easing: "ease-in-out",
+      offset: 80,
+    });
+  }, []);
+
   return (
     <>
       <InnerHeader />
@@ -21,7 +32,7 @@ const Service = () => {
       <main id="main">
         <section id="services-list" className="services-list">
           <div className="container" data-aos="fade-up">
-            <div className="section-header">
+            <div className="section-header" data-aos="fade-down" data-aos-delay="100">
               <h2>
                 We are a
                 <span style={{ color: "#155bd5" }}> STUDENTS ORGANIZATION</span> in
