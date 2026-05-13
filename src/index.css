@@ -868,6 +868,24 @@ position: relative;
   }
 }
 
+/* Feature Section Styling */
+.blog.py-5.bg-light {
+  padding: 80px 0 !important;
+  background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%) !important;
+}
+
+.blog-details .img-fluid {
+  border-radius: 20px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.blog-details .img-fluid:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 80px rgba(21, 91, 213, 0.15);
+}
+
 /*.header-image img{
 	-webkit-clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
 -clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
@@ -2426,31 +2444,135 @@ background: var(--color-white);}
 
 
 /*About us*/
-.vision .card-body {padding-bottom:2rem}
-.vision .card-body .card-title{margin-bottom:15px;}
-
-
-.vision .card-body .card-title {
-  display: block;  
-  padding-bottom: 10px;
-  position: relative;
-  font-weight: 500;
+.vision {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
 }
 
-.vision .card-body .card-title::after {
+.vision-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 50px 30px 35px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.vision-card::before {
   content: "";
   position: absolute;
-  display: block;
-  width: 50px;
-  height: 2px;
-  background: var(--color-primary);
-  bottom: 0;
+  top: 0;
   left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #155bd5, #0095f6);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
 }
 
-/*--------------------------------------------------------------
-# Blog Sidebar
---------------------------------------------------------------*/
+.vision-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 30px 70px rgba(21, 91, 213, 0.15);
+  border-color: rgba(21, 91, 213, 0.1);
+}
+
+.vision-card:hover::before {
+  transform: scaleX(1);
+}
+
+.vision-card-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #155bd5, #0095f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+  margin-bottom: 20px;
+  transition: all 0.4s ease;
+  box-shadow: 0 12px 30px rgba(21, 91, 213, 0.2);
+}
+
+.vision-card:hover .vision-card-icon {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 18px 45px rgba(21, 91, 213, 0.35);
+}
+
+.vision-card-body {
+  flex-grow: 1;
+}
+
+.vision-card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1b2f45;
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.vision-card-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #155bd5, #0095f6);
+  border-radius: 2px;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vision-card:hover .vision-card-title::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.vision-card-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #666;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.vision-card:hover .vision-card-text {
+  color: #1b2f45;
+}
+
+.vision .vision-card .form-control,
+.vision .vision-card textarea {
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .vision-card {
+    padding: 40px 25px 30px;
+  }
+
+  .vision-card-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .vision-card-title {
+    font-size: 20px;
+  }
+}
+
+/*About us old*/
 .blog .sidebar .sidebar-title {
   font-size: 22px;
   font-weight: 400;

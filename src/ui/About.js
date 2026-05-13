@@ -113,39 +113,56 @@ const About = ({ isAdmin }) => {
         </section>
 
         {/* ================= VISION SECTION ================= */}
-        <section className="vision">
+        <section className="vision py-5">
           <div className="container">
-            <div className="row gy-4">
-              {["Vision", "Mission", "Values"].map((title, index) => (
-                <div className="col-lg-4" key={index} data-aos="fade-up" data-aos-delay={`${150 + index * 100}`}>
-                  <div className="card-item">
-                    <div className="card-body">
-                      <h4>{title}</h4>
+            <div className="section-header text-center mb-5" data-aos="fade-down">
+              <h2>Our Direction</h2>
+              <p>Vision, Mission & Values</p>
+            </div>
+
+            <div className="row gy-4 justify-content-center">
+              {[
+                { title: "Vision", key: "vision", icon: "bi-binoculars" },
+                { title: "Mission", key: "mission", icon: "bi-target" },
+                { title: "Values", key: "values", icon: "bi-heart" },
+              ].map((item, index) => (
+                <div
+                  className="col-lg-4 col-md-6"
+                  key={index}
+                  data-aos="fade-up"
+                  data-aos-delay={`${150 + index * 100}`}
+                >
+                  <div className="vision-card">
+                    <div className="vision-card-icon">
+                      <i className={`bi ${item.icon}`}></i>
+                    </div>
+                    <div className="vision-card-body">
+                      <h4 className="vision-card-title">{item.title}</h4>
 
                       {editingSection === "vision" ? (
-                        <input
-                          type="text"
+                        <textarea
                           value={
-                            title === "Vision"
+                            item.key === "vision"
                               ? vision
-                              : title === "Mission"
+                              : item.key === "mission"
                               ? mission
                               : values
                           }
                           onChange={(e) =>
-                            title === "Vision"
+                            item.key === "vision"
                               ? setVision(e.target.value)
-                              : title === "Mission"
+                              : item.key === "mission"
                               ? setMission(e.target.value)
                               : setValues(e.target.value)
                           }
                           className="form-control"
+                          rows={4}
                         />
                       ) : (
-                        <p>
-                          {title === "Vision"
+                        <p className="vision-card-text">
+                          {item.key === "vision"
                             ? vision
-                            : title === "Mission"
+                            : item.key === "mission"
                             ? mission
                             : values}
                         </p>
@@ -157,12 +174,9 @@ const About = ({ isAdmin }) => {
             </div>
 
             {isAdmin && (
-              <div style={{ textAlign: "right", marginTop: "15px" }}>
+              <div className="text-center mt-5">
                 {editingSection === "vision" && (
-                  <button
-                    className="btn btn-success me-2"
-                    onClick={saveData}
-                  >
+                  <button className="btn btn-success me-2" onClick={saveData}>
                     Save
                   </button>
                 )}
