@@ -7,6 +7,10 @@ function AdminLogin({ setIsAuth }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleForgotPassword = () => {
+    navigate("/admin/forgot-password");
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -46,6 +50,11 @@ function AdminLogin({ setIsAuth }) {
             Log In
           </button>
         </form>
+        <p style={styles.forgotText}>
+          <button type="button" onClick={handleForgotPassword} style={styles.linkButton}>
+            Forgot Password?
+          </button>
+        </p>
       </div>
     </div>
   );
@@ -95,6 +104,18 @@ const styles = {
     borderRadius: "4px",
     cursor: "pointer",
     marginBottom: "10px",
+  },
+  forgotText: {
+    marginTop: "10px",
+  },
+  linkButton: {
+    background: "none",
+    border: "none",
+    color: "#0095f6",
+    cursor: "pointer",
+    textDecoration: "underline",
+    fontSize: "14px",
+    padding: 0,
   },
 };
 
