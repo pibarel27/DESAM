@@ -1,5 +1,5 @@
-import { useState} from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { loadHeroFromStorage, saveHeroToStorage } from "./heroStorage";
 import shapeImg from "../img/img-wave2.png";
 import desam from "../img/header/desam.png";
 import { Link } from "react-router-dom";
@@ -15,17 +15,16 @@ const Carousel = ({ isAuth }) => {
 
   const [editMode, setEditMode] = useState(false);
 
-  // ✅ Load data from backend
- 
+  useEffect(() => {
+    setHero(loadHeroFromStorage());
+  }, []);
 
-  // ✅ Handle input change
   const handleChange = (e) => {
     setHero({ ...hero, [e.target.name]: e.target.value });
   };
 
-  // ✅ Save to backend
-  const handleSave = async () => {
-    await axios.post("http://localhost:5000/api/hero", hero);
+  const handleSave = () => {
+    saveHeroToStorage(hero);
     setEditMode(false);
   };
 

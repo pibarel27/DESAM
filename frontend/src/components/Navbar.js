@@ -236,7 +236,7 @@ const Navbar = () => {
               <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>Contact</Link>
             </li>
             <li>
-              <Link to="/AdminDashboard" className={splitLocation[1] === "AdminDashboard" ? "active" : ""}>Admin</Link>
+              <Link to="/admin" className={splitLocation[1] === "admin" ? "active" : ""}>Admin</Link>
             </li>
           </ul>
 
@@ -274,7 +274,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
-          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>Admin</Link>
+          <Link to="/admin" onClick={() => setIsOpen(false)}>Admin</Link>
         </div>
       </nav>
     </>

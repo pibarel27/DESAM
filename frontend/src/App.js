@@ -9,7 +9,8 @@ const About = lazy(() => import("./ui/About"));
 const Service = lazy(() => import("./ui/Service"));
 
 const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
-const AdminLogin = lazy(() => import("./components/AdminLogin")); // ✅ NEW
+const AdminLogin = lazy(() => import("./components/AdminLogin"));
+const AdminForgotPassword = lazy(() => import("./components/AdminForgotPassword"));
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -38,6 +39,10 @@ function App() {
           <Route
             path="admin"
             element={<AdminLogin setIsAuth={setIsAuth} />}
+          />
+          <Route
+            path="admin/forgot-password"
+            element={<AdminForgotPassword />}
           />
 
           {/* 🔐 Protected Dashboard */}

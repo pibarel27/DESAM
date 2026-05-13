@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import AOS from "aos";
+import { loadAboutFromStorage, saveAboutToStorage } from "./aboutStorage";
 import "aos/dist/aos.css";
 
 import wakat from "../img/wakat.jpg";
@@ -29,42 +29,19 @@ const About = ({ isAdmin }) => {
     });
   }, []);
 
-  // 🔹 Fetch Data From Backend
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/about");
-        if (res.data) {
-          setAboutText(res.data.aboutText || []);
-          setVision(res.data.vision || "");
-          setMission(res.data.mission || "");
-          setValues(res.data.values || "");
-          setTeam(res.data.team || []);
-        }
-      } catch (error) {
-        console.log("Fetch Error:", error);
-      }
-    };
-
-    fetchData();
+    const data = loadAboutFromStorage();
+    setAboutText(data.aboutText);
+    setVision(data.vision);
+    setMission(data.mission);
+    setValues(data.values);
+    setTeam(data.team);
   }, []);
 
-  // 🔹 Save Data To Backend
-  const saveData = async () => {
-    try {
-      await axios.post("http://localhost:5000/api/about", {
-        aboutText,
-        vision,
-        mission,
-        values,
-        team,
-      });
-
-      alert("Saved Successfully!");
-      setEditingSection(null);
-    } catch (error) {
-      console.log("Save Error:", error);
-    }
+  const saveData = () => {
+    saveAboutToStorage({ aboutText, vision, mission, values, team });
+    alert("Saved to this browser.");
+    setEditingSection(null);
   };
 
   const handleAboutChange = (index, value) => {
@@ -82,16 +59,16 @@ const About = ({ isAdmin }) => {
         {/* ================= ABOUT SECTION ================= */}
         <section className="about">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header" data-aos="fade-down" data-aos-delay="100">
               <h2>Meyamgi Desam</h2>
             </div>
 
             <div className="row gy-4 align-items-center">
-              <div className="col-lg-6">
+              <div className="col-lg-6" data-aos="fade-right" data-aos-delay="150">
                 <img src={wakat} className="img-fluid" alt="About" />
               </div>
 
-              <div className="col-lg-6">
+              <div className="col-lg-6" data-aos="fade-left" data-aos-delay="150">
                 {aboutText.map((line, idx) =>
                   editingSection === "about" ? (
                     <textarea
@@ -136,39 +113,56 @@ const About = ({ isAdmin }) => {
         </section>
 
         {/* ================= VISION SECTION ================= */}
-        <section className="vision">
+        <section className="vision py-5">
           <div className="container">
-            <div className="row gy-4">
-              {["Vision", "Mission", "Values"].map((title, index) => (
-                <div className="col-lg-4" key={index}>
-                  <div className="card-item">
-                    <div className="card-body">
-                      <h4>{title}</h4>
+            <div className="section-header text-center mb-5" data-aos="fade-down">
+              <h2>Our Direction</h2>
+              <p>Vision, Mission & Values</p>
+            </div>
+
+            <div className="row gy-4 justify-content-center">
+              {[
+                { title: "Vision", key: "vision", icon: "bi-binoculars" },
+                { title: "Mission", key: "mission", icon: "bi-target" },
+                { title: "Values", key: "values", icon: "bi-heart" },
+              ].map((item, index) => (
+                <div
+                  className="col-lg-4 col-md-6"
+                  key={index}
+                  data-aos="fade-up"
+                  data-aos-delay={`${150 + index * 100}`}
+                >
+                  <div className="vision-card">
+                    <div className="vision-card-icon">
+                      <i className={`bi ${item.icon}`}></i>
+                    </div>
+                    <div className="vision-card-body">
+                      <h4 className="vision-card-title">{item.title}</h4>
 
                       {editingSection === "vision" ? (
-                        <input
-                          type="text"
+                        <textarea
                           value={
-                            title === "Vision"
+                            item.key === "vision"
                               ? vision
-                              : title === "Mission"
+                              : item.key === "mission"
                               ? mission
                               : values
                           }
                           onChange={(e) =>
-                            title === "Vision"
+                            item.key === "vision"
                               ? setVision(e.target.value)
-                              : title === "Mission"
+                              : item.key === "mission"
                               ? setMission(e.target.value)
                               : setValues(e.target.value)
                           }
                           className="form-control"
+                          rows={4}
                         />
                       ) : (
-                        <p>
-                          {title === "Vision"
+                        <p className="vision-card-text">
+                          {item.key === "vision"
                             ? vision
-                            : title === "Mission"
+                            : item.key === "mission"
                             ? mission
                             : values}
                         </p>
@@ -180,12 +174,9 @@ const About = ({ isAdmin }) => {
             </div>
 
             {isAdmin && (
-              <div style={{ textAlign: "right", marginTop: "15px" }}>
+              <div className="text-center mt-5">
                 {editingSection === "vision" && (
-                  <button
-                    className="btn btn-success me-2"
-                    onClick={saveData}
-                  >
+                  <button className="btn btn-success me-2" onClick={saveData}>
                     Save
                   </button>
                 )}
@@ -214,9 +205,9 @@ const About = ({ isAdmin }) => {
 
             <div className="row gy-4">
               {team.map((member, idx) => (
-                <div className="col-lg-6" key={idx}>
+                <div className="col-lg-6" key={idx} data-aos="fade-up" data-aos-delay={`${150 + idx * 100}`}>
                   <div className="row align-items-center">
-                    <div className="col-4">
+                    <div className="col-4" data-aos="zoom-in" data-aos-delay="200">
                       <img
                         src={member.img}
                         className="img-fluid"
