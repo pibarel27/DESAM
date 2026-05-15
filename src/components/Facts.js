@@ -18,7 +18,7 @@ const Facts = () => {
                   <h3> BRANCH </h3>
                 </div>
                 <div className="col-lg-4 col-6 text-center">
-                  <span className="purecounter">1000+</span>
+                  <span className="purecounter">12000+</span>
                   <h3> Members </h3>
                   <p>Across the Globe</p>
                 </div>

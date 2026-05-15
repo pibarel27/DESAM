@@ -203,7 +203,8 @@ const About = ({ isAdmin }) => {
               <h2>Our Team</h2>
             </div>
 
-            <div className="row gy-4">
+            {/* <div className="row gy-4">
+            
               {team.map((member, idx) => (
                 <div className="col-lg-6" key={idx} data-aos="fade-up" data-aos-delay={`${150 + idx * 100}`}>
                   <div className="row align-items-center">
@@ -276,7 +277,88 @@ const About = ({ isAdmin }) => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
+            <div className="row gy-4 justify-content-center">
+  {team.map((member, idx) => (
+    <div
+      className="col-12 col-sm-6 col-lg-4 d-flex justify-content-center"
+      key={idx}
+      data-aos="fade-up"
+      data-aos-delay={`${150 + idx * 100}`}
+    >
+      <div className="row align-items-center w-100">
+        <div
+          className="col-4 text-center"
+          data-aos="zoom-in"
+          data-aos-delay="200"
+        >
+          <img
+            src={member.img}
+            className="img-fluid"
+            alt={member.name}
+          />
+        </div>
+
+        <div className="col-8">
+          {editingSection === "team" ? (
+            <>
+              <input
+                type="text"
+                value={member.name}
+                placeholder="Name"
+                className="form-control mb-2"
+                onChange={(e) => {
+                  const updated = [...team];
+                  updated[idx].name = e.target.value;
+                  setTeam(updated);
+                }}
+              />
+
+              <input
+                type="text"
+                value={member.role}
+                placeholder="Role"
+                className="form-control mb-2"
+                onChange={(e) => {
+                  const updated = [...team];
+                  updated[idx].role = e.target.value;
+                  setTeam(updated);
+                }}
+              />
+
+              <textarea
+                value={member.desc}
+                placeholder="Description"
+                className="form-control mb-2"
+                onChange={(e) => {
+                  const updated = [...team];
+                  updated[idx].desc = e.target.value;
+                  setTeam(updated);
+                }}
+              />
+
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => {
+                  const updated = team.filter((_, i) => i !== idx);
+                  setTeam(updated);
+                }}
+              >
+                Delete
+              </button>
+            </>
+          ) : (
+            <>
+              <h4>{member.name}</h4>
+              <span>{member.role}</span>
+              <p>{member.desc}</p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
 
             {isAdmin && (
               <div style={{ textAlign: "right", marginTop: "20px" }}>

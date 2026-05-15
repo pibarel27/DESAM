@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { lazy, Suspense, useState, useEffect } from "react";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
@@ -7,6 +7,16 @@ const Career = lazy(() => import("./ui/Career"));
 const Contact = lazy(() => import("./ui/Contact"));
 const About = lazy(() => import("./ui/About"));
 const Service = lazy(() => import("./ui/Service"));
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
 const AdminLogin = lazy(() => import("./components/AdminLogin"));
@@ -24,6 +34,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
 

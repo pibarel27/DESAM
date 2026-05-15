@@ -1,11 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import InnerHeaderBanner from "../components/InnerHeaderBanner";
 import InnerHeader from "../components/InnerHeader";
 import Footer from "../components/Footer";
 import contactHeader from "../img/contact-header.jpg";
 import emailjs from "emailjs-com";
+import { loadContactFromStorage, saveContactToStorage } from "./contactStorage";
 
-const Contact = () => {
+const Contact = ({ isAdmin }) => {
   const form = useRef();
 
   const [inputFields, setInputFields] = useState({
@@ -15,10 +16,26 @@ const Contact = () => {
     message: "",
   });
 
+  const [contactInfo, setContactInfo] = useState(() => loadContactFromStorage());
+  const [editMode, setEditMode] = useState(false);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   const { username, email, subject, message } = inputFields;
+
+  useEffect(() => {
+    setContactInfo(loadContactFromStorage());
+  }, []);
+
+  const updateContactField = (field, value) => {
+    setContactInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const saveContactInfo = () => {
+    saveContactToStorage(contactInfo);
+    alert("Contact settings saved for this browser.");
+    setEditMode(false);
+  };
 
   // Validate form fields
   const validateValues = (values) => {
@@ -71,7 +88,27 @@ const Contact = () => {
         <section id="contact" className="contact">
           <div className="container position-relative" data-aos="fade-up">
             <div className="section-header">
-              <h2>Lets have a TALK</h2>
+              {editMode ? (
+                <>
+                  <input
+                    type="text"
+                    className="form-control mb-3"
+                    value={contactInfo.heading}
+                    onChange={(e) => updateContactField("heading", e.target.value)}
+                  />
+                  <textarea
+                    rows={2}
+                    className="form-control"
+                    value={contactInfo.description}
+                    onChange={(e) => updateContactField("description", e.target.value)}
+                  />
+                </>
+              ) : (
+                <>
+                  <h2>{contactInfo.heading}</h2>
+                  <p>{contactInfo.description}</p>
+                </>
+              )}
             </div>
 
             <div className="row gy-4 d-flex justify-content-end">
@@ -80,8 +117,27 @@ const Contact = () => {
                   <i className="bi bi-geo-alt flex-shrink-0"></i>
                   <div>
                     <h4>Location:</h4>
-                    <h5>Manipur, India:</h5>
-                    <p>Keishampat, Junction, Imphal West - 795001.</p>
+                    {editMode ? (
+                      <>
+                        <input
+                          type="text"
+                          className="form-control mb-2"
+                          value={contactInfo.location}
+                          onChange={(e) => updateContactField("location", e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={contactInfo.locationDetails}
+                          onChange={(e) => updateContactField("locationDetails", e.target.value)}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <h5>{contactInfo.location}</h5>
+                        <p>{contactInfo.locationDetails}</p>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -89,9 +145,18 @@ const Contact = () => {
                   <i className="bi bi-envelope flex-shrink-0"></i>
                   <div>
                     <h4>Email:</h4>
-                    <p>
-                      <a href="mailto:desamofficial02@gmail.com">desamofficial02@gmail.com</a>
-                    </p>
+                    {editMode ? (
+                      <input
+                        type="email"
+                        className="form-control"
+                        value={contactInfo.email}
+                        onChange={(e) => updateContactField("email", e.target.value)}
+                      />
+                    ) : (
+                      <p>
+                        <a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a>
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -99,7 +164,16 @@ const Contact = () => {
                   <i className="bi bi-phone flex-shrink-0"></i>
                   <div>
                     <h4>Call:</h4>
-                    <p>+917005291834</p>
+                    {editMode ? (
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={contactInfo.phone}
+                        onChange={(e) => updateContactField("phone", e.target.value)}
+                      />
+                    ) : (
+                      <p>{contactInfo.phone}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -175,6 +249,31 @@ const Contact = () => {
                 </form>
               </div>
             </div>
+
+            {isAdmin && (
+              <div className="text-center mt-4">
+                {editMode ? (
+                  <>
+                    <button className="btn btn-success me-2" onClick={saveContactInfo}>
+                      Save
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setContactInfo(loadContactFromStorage());
+                        setEditMode(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button className="btn btn-danger" onClick={() => setEditMode(true)}>
+                    Edit Section
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </section>
       </main>

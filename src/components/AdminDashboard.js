@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { loadHeroFromStorage, saveHeroToStorage } from "./heroStorage";
 import { loadAboutFromStorage, saveAboutToStorage } from "../ui/aboutStorage";
 import { loadServicesFromStorage, saveServicesToStorage } from "../ui/serviceStorage";
+import { loadContactFromStorage, saveContactToStorage } from "../ui/contactStorage";
+import { loadCareerFromStorage, saveCareerToStorage } from "../ui/careerStorage";
 
 const sections = [
   { id: "home", label: "Home" },
@@ -483,27 +485,215 @@ function ServicesEditor() {
 }
 
 function ContactEditor() {
+  const [contact, setContact] = useState(() => loadContactFromStorage());
+
+  useEffect(() => {
+    setContact(loadContactFromStorage());
+  }, []);
+
+  const updateField = (field, value) => {
+    setContact((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = () => {
+    saveContactToStorage(contact);
+    alert("Contact page saved for this browser.");
+  };
+
   return (
     <div>
       <h1 className="h3 mb-3">Contact page</h1>
-      <p className="text-secondary">
-        The contact page currently sends emails via EmailJS. If you want editable copy or contact
-        details here, we can attach them to local storage similar to the About page.
+      <p className="text-secondary mb-4">
+        Edit the contact page heading, description, location, email, and phone details shown on the public page.
       </p>
+
+      <div className="card shadow-sm mb-4">
+        <div className="card-body row g-3">
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Heading</label>
+            <input
+              type="text"
+              className="form-control"
+              value={contact.heading}
+              onChange={(e) => updateField("heading", e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Description</label>
+            <textarea
+              rows={3}
+              className="form-control"
+              value={contact.description}
+              onChange={(e) => updateField("description", e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Location label</label>
+            <input
+              type="text"
+              className="form-control"
+              value={contact.location}
+              onChange={(e) => updateField("location", e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Location details</label>
+            <input
+              type="text"
+              className="form-control"
+              value={contact.locationDetails}
+              onChange={(e) => updateField("locationDetails", e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              value={contact.email}
+              onChange={(e) => updateField("email", e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label fw-semibold">Phone</label>
+            <input
+              type="text"
+              className="form-control"
+              value={contact.phone}
+              onChange={(e) => updateField("phone", e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <button type="button" className="btn btn-primary" onClick={handleSave}>
+        Save contact page
+      </button>
     </div>
   );
 }
 
 function CareersEditor() {
+  const [career, setCareer] = useState(() => loadCareerFromStorage());
+
+  useEffect(() => {
+    setCareer(loadCareerFromStorage());
+  }, []);
+
+  const updateField = (field, value) => {
+    setCareer((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateParagraph = (index, value) => {
+    const next = [...career.paragraphs];
+    next[index] = value;
+    setCareer((prev) => ({ ...prev, paragraphs: next }));
+  };
+
+  const addParagraph = () => {
+    setCareer((prev) => ({ ...prev, paragraphs: [...prev.paragraphs, ""] }));
+  };
+
+  const removeParagraph = (index) => {
+    setCareer((prev) => ({
+      ...prev,
+      paragraphs: prev.paragraphs.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleImageChange = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCareer((prev) => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = () => {
+    saveCareerToStorage(career);
+    alert("Career page saved for this browser.");
+  };
+
   return (
     <div>
       <h1 className="h3 mb-3">Careers page</h1>
-      <p className="text-secondary">
-        Careers copy is still static. We can move it into editable fields and local storage from
-        this panel in a follow-up step.
+      <p className="text-secondary mb-4">
+        Manage the careers page title, paragraphs, image, and application email address from the admin panel.
       </p>
+
+      <div className="card shadow-sm mb-4">
+        <div className="card-body">
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              value={career.title}
+              onChange={(e) => updateField("title", e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Image</label>
+            {career.image && (
+              <img
+                src={career.image}
+                alt="Career"
+                className="img-fluid rounded mb-3"
+                style={{ maxHeight: 220, objectFit: "cover" }}
+              />
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="form-control"
+              onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Application Email</label>
+            <input
+              type="email"
+              className="form-control"
+              value={career.contactEmail}
+              onChange={(e) => updateField("contactEmail", e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <label className="form-label fw-semibold mb-0">Paragraphs</label>
+              <button type="button" className="btn btn-outline-primary btn-sm" onClick={addParagraph}>
+                Add paragraph
+              </button>
+            </div>
+            {career.paragraphs.map((paragraph, index) => (
+              <div key={index} className="input-group mb-2">
+                <textarea
+                  className="form-control"
+                  rows={3}
+                  value={paragraph}
+                  onChange={(e) => updateParagraph(index, e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={() => removeParagraph(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <button type="button" className="btn btn-primary" onClick={handleSave}>
+        Save careers page
+      </button>
     </div>
   );
 }
-
 export default AdminDashboard;
