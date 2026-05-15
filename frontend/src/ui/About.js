@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import AOS from "aos";
-import { loadAboutFromStorage, saveAboutToStorage } from "./aboutStorage";
 import "aos/dist/aos.css";
 
 import wakat from "../img/wakat.jpg";
 import abtHeader from "../img/about-header.jpg";
 
-import InnerHeaderBanner from "../components/InnerHeaderBanner";
-import InnerHeader from "../components/InnerHeader";
-import Footer from "../components/Footer";
+// import InnerHeaderBanner from "../components/InnerHeaderBanner";
+// import InnerHeader from "../components/InnerHeader";
+// import Footer from "../components/Footer";
 
-const About = ({ isAdmin }) => {
-  const [editingSection, setEditingSection] = useState(null);
+const About = () => {
+  const [aboutText, setAboutText] = useState(
+    "About content will be added soon."
+  );
 
-  const [aboutText, setAboutText] = useState([]);
-  const [vision, setVision] = useState("");
-  const [mission, setMission] = useState("");
-  const [values, setValues] = useState("");
+  const [overview, setOverview] = useState({
+    vision: "",
+    mission: "",
+    values: "",
+  });
+
   const [team, setTeam] = useState([]);
 
-  // 🔹 AOS Init
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -27,104 +32,120 @@ const About = ({ isAdmin }) => {
       easing: "ease-in-out",
       offset: 80,
     });
+
+    fetchAboutUsText();
+    fetchOverview();
+    fetchTeamMembers();
   }, []);
 
-  useEffect(() => {
-    const data = loadAboutFromStorage();
-    setAboutText(data.aboutText);
-    setVision(data.vision);
-    setMission(data.mission);
-    setValues(data.values);
-    setTeam(data.team);
-  }, []);
+  const fetchAboutUsText = async () => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/admin/about/about-text`
+      );
 
-  const saveData = () => {
-    saveAboutToStorage({ aboutText, vision, mission, values, team });
-    alert("Saved to this browser.");
-    setEditingSection(null);
+      if (response.data.aboutUsText) {
+        console.log(response.data.aboutUsText);
+        setAboutText(response.data.aboutUsText.content);
+      }
+    } catch (error) {
+      console.error("Error fetching about us text:", error);
+    }
   };
 
-  const handleAboutChange = (index, value) => {
-    const updated = [...aboutText];
-    updated[index] = value;
-    setAboutText(updated);
+  const fetchOverview = async () => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/admin/about/overview`
+      );
+
+      if (response.data.overview) {
+        setOverview(response.data.overview);
+      }
+    } catch (error) {
+      console.error("Error fetching overview:", error);
+    }
+  };
+
+  const fetchTeamMembers = async () => {
+    try {
+      const response = await axios.get(
+        `${backendUrl}/api/admin/about/team-members`
+      );
+
+      if (response.data.teamMembers) {
+        setTeam(response.data.teamMembers);
+      }
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
   };
 
   return (
     <>
-      <InnerHeader />
-      <InnerHeaderBanner name="About Us" img={abtHeader} />
+      {/* <InnerHeader />
+      <InnerHeaderBanner name="About Us" img={abtHeader} /> */}
 
       <main>
-        {/* ================= ABOUT SECTION ================= */}
+        {/* ABOUT SECTION */}
         <section className="about">
           <div className="container">
-            <div className="section-header" data-aos="fade-down" data-aos-delay="100">
+            <div
+              className="section-header"
+              data-aos="fade-down"
+              data-aos-delay="100"
+            >
               <h2>Meyamgi Desam</h2>
             </div>
 
             <div className="row gy-4 align-items-center">
-              <div className="col-lg-6" data-aos="fade-right" data-aos-delay="150">
+              <div
+                className="col-lg-6"
+                data-aos="fade-right"
+                data-aos-delay="150"
+              >
                 <img src={wakat} className="img-fluid" alt="About" />
               </div>
 
-              <div className="col-lg-6" data-aos="fade-left" data-aos-delay="150">
-                {aboutText.map((line, idx) =>
-                  editingSection === "about" ? (
-                    <textarea
-                      key={idx}
-                      value={line}
-                      onChange={(e) =>
-                        handleAboutChange(idx, e.target.value)
-                      }
-                      className="form-control mb-2"
-                    />
-                  ) : (
-                    <p key={idx}>{line}</p>
-                  )
-                )}
+              <div
+                className="col-lg-6"
+                data-aos="fade-left"
+                data-aos-delay="150"
+              >
+                <p>{aboutText}</p>
               </div>
             </div>
-
-            {isAdmin && (
-              <div style={{ textAlign: "right", marginTop: "15px" }}>
-                {editingSection === "about" && (
-                  <button
-                    className="btn btn-success me-2"
-                    onClick={saveData}
-                  >
-                    Save
-                  </button>
-                )}
-
-                <button
-                  className="btn btn-primary"
-                  onClick={() =>
-                    setEditingSection(
-                      editingSection === "about" ? null : "about"
-                    )
-                  }
-                >
-                  {editingSection === "about" ? "Done" : "Edit"}
-                </button>
-              </div>
-            )}
           </div>
         </section>
 
-        {/* ================= VISION SECTION ================= */}
+        {/* OVERVIEW SECTION */}
         <section className="vision py-5">
           <div className="container">
-            <div className="section-header text-center mb-5" data-aos="fade-down">
+            <div
+              className="section-header text-center mb-5"
+              data-aos="fade-down"
+            >
               <h2>Our Direction</h2>
               <p>Vision, Mission & Values</p>
             </div>
 
             <div className="row gy-4 justify-content-center">
               {[
-                { title: "Vision", key: "vision", icon: "bi-binoculars" },
-                { title: "Mission", key: "mission", icon: "bi-target" },
-                { title: "Values", key: "values", icon: "bi-heart" },
+                {
+                  title: "Vision",
+                  content: overview.vision,
+                  icon: "bi-binoculars",
+                },
+                {
+                  title: "Mission",
+                  content: overview.mission,
+                  icon: "bi-target",
+                },
+                {
+                  title: "Values",
+                  content: overview.values,
+                  icon: "bi-heart",
+                },
               ].map((item, index) => (
                 <div
                   className="col-lg-4 col-md-6"
@@ -136,67 +157,19 @@ const About = ({ isAdmin }) => {
                     <div className="vision-card-icon">
                       <i className={`bi ${item.icon}`}></i>
                     </div>
+
                     <div className="vision-card-body">
                       <h4 className="vision-card-title">{item.title}</h4>
-
-                      {editingSection === "vision" ? (
-                        <textarea
-                          value={
-                            item.key === "vision"
-                              ? vision
-                              : item.key === "mission"
-                              ? mission
-                              : values
-                          }
-                          onChange={(e) =>
-                            item.key === "vision"
-                              ? setVision(e.target.value)
-                              : item.key === "mission"
-                              ? setMission(e.target.value)
-                              : setValues(e.target.value)
-                          }
-                          className="form-control"
-                          rows={4}
-                        />
-                      ) : (
-                        <p className="vision-card-text">
-                          {item.key === "vision"
-                            ? vision
-                            : item.key === "mission"
-                            ? mission
-                            : values}
-                        </p>
-                      )}
+                      <p className="vision-card-text">{item.content}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-
-            {isAdmin && (
-              <div className="text-center mt-5">
-                {editingSection === "vision" && (
-                  <button className="btn btn-success me-2" onClick={saveData}>
-                    Save
-                  </button>
-                )}
-
-                <button
-                  className="btn btn-primary"
-                  onClick={() =>
-                    setEditingSection(
-                      editingSection === "vision" ? null : "vision"
-                    )
-                  }
-                >
-                  {editingSection === "vision" ? "Done" : "Edit"}
-                </button>
-              </div>
-            )}
           </div>
         </section>
 
-        {/* ================= TEAM SECTION ================= */}
+        {/* TEAM SECTION */}
         <section className="management light-bg">
           <div className="container">
             <div className="section-header">
@@ -205,121 +178,39 @@ const About = ({ isAdmin }) => {
 
             <div className="row gy-4">
               {team.map((member, idx) => (
-                <div className="col-lg-6" key={idx} data-aos="fade-up" data-aos-delay={`${150 + idx * 100}`}>
+                <div
+                  className="col-lg-6"
+                  key={member._id || idx}
+                  data-aos="fade-up"
+                  data-aos-delay={`${150 + idx * 100}`}
+                >
                   <div className="row align-items-center">
-                    <div className="col-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div
+                      className="col-4"
+                      data-aos="zoom-in"
+                      data-aos-delay="200"
+                    >
                       <img
-                        src={member.img}
+                        src={member.photo}
                         className="img-fluid"
                         alt={member.name}
                       />
                     </div>
 
                     <div className="col-8">
-                      {editingSection === "team" ? (
-                        <>
-                          <input
-                            type="text"
-                            value={member.name}
-                            placeholder="Name"
-                            className="form-control mb-2"
-                            onChange={(e) => {
-                              const updated = [...team];
-                              updated[idx].name = e.target.value;
-                              setTeam(updated);
-                            }}
-                          />
-
-                          <input
-                            type="text"
-                            value={member.role}
-                            placeholder="Role"
-                            className="form-control mb-2"
-                            onChange={(e) => {
-                              const updated = [...team];
-                              updated[idx].role = e.target.value;
-                              setTeam(updated);
-                            }}
-                          />
-
-                          <textarea
-                            value={member.desc}
-                            placeholder="Description"
-                            className="form-control mb-2"
-                            onChange={(e) => {
-                              const updated = [...team];
-                              updated[idx].desc = e.target.value;
-                              setTeam(updated);
-                            }}
-                          />
-
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => {
-                              const updated = team.filter(
-                                (_, i) => i !== idx
-                              );
-                              setTeam(updated);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <h4>{member.name}</h4>
-                          <span>{member.role}</span>
-                          <p>{member.desc}</p>
-                        </>
-                      )}
+                      <h4>{member.name}</h4>
+                      <span>{member.role}</span>
+                      <p>{member.description}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-
-            {isAdmin && (
-              <div style={{ textAlign: "right", marginTop: "20px" }}>
-                {editingSection === "team" && (
-                  <>
-                    <button
-                      className="btn btn-success me-2"
-                      onClick={saveData}
-                    >
-                      Save
-                    </button>
-
-                    <button
-                      className="btn btn-secondary me-2"
-                      onClick={() =>
-                        setTeam([
-                          ...team,
-                          { name: "", role: "", desc: "", img: "" },
-                        ])
-                      }
-                    >
-                      Add Team Member
-                    </button>
-                  </>
-                )}
-
-                <button
-                  className="btn btn-primary"
-                  onClick={() =>
-                    setEditingSection(
-                      editingSection === "team" ? null : "team"
-                    )
-                  }
-                >
-                  {editingSection === "team" ? "Done" : "Edit"}
-                </button>
-              </div>
-            )}
           </div>
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

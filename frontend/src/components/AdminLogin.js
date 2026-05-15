@@ -1,25 +1,41 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AdminLogin({ setIsAuth }) {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   const handleForgotPassword = () => {
     navigate("/admin/forgot-password");
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (username === "admin" && password === "1234") {
+    try {
+      const res = await axios.post(
+        `${backendUrl}/api/admin/auth/login`,
+        { email, password },
+        { withCredentials: true },
+      );
+
       localStorage.setItem("adminAuth", "true");
       setIsAuth(true);
-      navigate("/AdminDashboard");
-    } else {
-      alert("Invalid Credentials");
+
+      toast.success("Admin login successful");
+      navigate("/admin-dashboard");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,31 +43,38 @@ function AdminLogin({ setIsAuth }) {
     <div style={styles.page}>
       <div style={styles.card}>
         <h1 style={styles.logo}>Admin Panel</h1>
-        <p style={styles.hint}>Sign in to open the dashboard. No server is required in this branch.</p>
+        <p style={styles.hint}>Login to access dashboard</p>
 
         <form onSubmit={handleLogin}>
           <input
-            type="text"
-            placeholder="Username"
+            type="email"
+            placeholder="Email"
             style={styles.input}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
+
           <input
             type="password"
             placeholder="Password"
             style={styles.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
+            required
           />
-          <button type="submit" style={styles.button}>
-            Log In
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
         <p style={styles.forgotText}>
-          <button type="button" onClick={handleForgotPassword} style={styles.linkButton}>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            style={styles.linkButton}
+          >
             Forgot Password?
           </button>
         </p>
@@ -79,13 +102,12 @@ const styles = {
   },
   logo: {
     fontSize: "28px",
-    marginBottom: "12px",
+    marginBottom: "10px",
   },
   hint: {
     fontSize: "13px",
     color: "#666",
     marginBottom: "20px",
-    lineHeight: 1.4,
   },
   input: {
     width: "100%",
@@ -103,7 +125,6 @@ const styles = {
     fontWeight: "bold",
     borderRadius: "4px",
     cursor: "pointer",
-    marginBottom: "10px",
   },
   forgotText: {
     marginTop: "10px",

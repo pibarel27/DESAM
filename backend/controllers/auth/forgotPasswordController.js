@@ -19,13 +19,16 @@ const forgotPasswordController = async(req,res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         admin.otp = otp;
-        admin.otpExtiry = Date.now() + 5 * 60 * 1000;
+        admin.otpExpiry = Date.now() + 5 * 60 * 1000;
 
         await admin.save();
 
         await sendEmail(email, "Password Reset OTP",
             `Your OTP for password reset is ${otp}`
-        )        
+        )   
+        res.status(200).json({
+        message: "OTP sent successfully",
+        });             
     } catch (error) {
         res.status(500).json({
             message: error.message

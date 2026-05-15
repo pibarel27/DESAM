@@ -1,24 +1,20 @@
-const Service = require("../../models/services");
-const cloudinary = require("../../config/cloudinary");
+const TeamMember = require("../../../models/teamMember");
+const cloudinary = require("../../../config/cloudinary");
 
-const updateServiceController = async (req, res) => {
+const updateTeamMembersController = async (req, res) => {
   try {
     const { updates } = req.body;
 
     const parsedUpdates =
       typeof updates === "string" ? JSON.parse(updates) : updates;
 
-    if (
-      !parsedUpdates ||
-      !Array.isArray(parsedUpdates) ||
-      parsedUpdates.length === 0
-    ) {
+    if (!parsedUpdates || !Array.isArray(parsedUpdates) || parsedUpdates.length === 0) {
       return res.status(400).json({
         message: "Updates array is required",
       });
     }
 
-    const updatedServices = await Promise.all(
+    const updatedMembers = await Promise.all(
       parsedUpdates.map(async (item, index) => {
         let photoUrl = item.photo || "";
 
@@ -27,18 +23,19 @@ const updateServiceController = async (req, res) => {
           const result = await cloudinary.uploader.upload(
             req.files[index].path,
             {
-              folder: "services",
+              folder: "teamMembers",
             }
           );
 
           photoUrl = result.secure_url;
         }
 
-        return await Service.findByIdAndUpdate(
+        return await TeamMember.findByIdAndUpdate(
           item.id,
           {
             photo: photoUrl,
-            heading: item.heading,
+            name: item.name,
+            role: item.role,
             description: item.description,
           },
           {
@@ -50,8 +47,8 @@ const updateServiceController = async (req, res) => {
     );
 
     res.status(200).json({
-      message: "Services updated successfully",
-      updatedServices,
+      message: "Team members updated successfully",
+      updatedMembers,
     });
   } catch (error) {
     res.status(500).json({
@@ -60,4 +57,4 @@ const updateServiceController = async (req, res) => {
   }
 };
 
-module.exports = updateServiceController;
+module.exports = updateTeamMembersController;

@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from "react";
 import desam from "../img/desam.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { animateScroll as scroll } from "react-scroll";
+import axios from "axios";
 
 const InnerHeader = ({ isAuth, setIsAuth }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
 
   const location = useLocation();
-  const splitLocation = location.pathname.split("/");
+  const navigate = useNavigate();
 
-  // ✅ Check login status on load
- 
+  const isActive = (path) => location.pathname === path;
 
-  // ✅ Logout Function
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
-    setIsAuth(false);
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      setIsAuth(false);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const toTop = () => {
@@ -25,25 +34,18 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
     setIsOpen(false);
   };
 
-  // Sticky Header
   useEffect(() => {
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setIsSticky(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // Prevent body scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
-    return () => (document.body.style.overflow = "auto");
   }, [isOpen]);
 
   return (
@@ -52,79 +54,64 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
         <div className="nav-container">
 
           {/* LOGO */}
-          <Link to="/" onClick={toTop}>
+          <Link to="/" onClick={toTop} className="logo">
             <img src={desam} alt="DESAM" className="logo-img" />
           </Link>
 
           {/* DESKTOP NAV */}
           <nav className="desktop-nav">
-            <Link to="/" className={splitLocation[1] === "" ? "active" : ""}>Home</Link>
-            <Link to="/about" className={splitLocation[1] === "about" ? "active" : ""}>About Us</Link>
-            <Link to="/services" className={splitLocation[1] === "services" ? "active" : ""}>Services</Link>
-            <Link to="/careers" className={splitLocation[1] === "careers" ? "active" : ""}>Careers</Link>
-            <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>Contact Us</Link>
+            <Link className={isActive("/") ? "active" : ""} to="/">Home</Link>
+            <Link className={isActive("/about") ? "active" : ""} to="/about">About</Link>
+            <Link className={isActive("/services") ? "active" : ""} to="/services">Services</Link>
+            <Link className={isActive("/careers") ? "active" : ""} to="/careers">Careers</Link>
+            <Link className={isActive("/contact") ? "active" : ""} to="/contact">Contact</Link>
 
             {!isAuth && <Link to="/admin">Admin</Link>}
-            {isAuth && <Link to="/AdminDashboard">Dashboard</Link>}
 
             {isAuth && (
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
-              </button>
+              <>
+                <Link to="/admin-dashboard">Dashboard</Link>
+                <button onClick={handleLogout} className="logout-btn">
+                  Logout
+                </button>
+              </>
             )}
           </nav>
 
           {/* HAMBURGER */}
-          <button
-            className="hamburger"
-            onClick={() => setIsOpen(prev => !prev)}
-            aria-label="Toggle Menu"
-          >
+          <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
-
         </div>
       </header>
 
       {/* MOBILE MENU */}
       <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
         <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-        <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
+        <Link to="/about" onClick={() => setIsOpen(false)}>About</Link>
         <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
         <Link to="/careers" onClick={() => setIsOpen(false)}>Careers</Link>
-        <Link to="/contact" onClick={() => setIsOpen(false)}>Contact Us</Link>
+        <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
 
-        {!isAuth && (
-          <Link to="/admin" onClick={() => setIsOpen(false)}>
-            Admin
-          </Link>
-        )}
-        {isAuth && (
-          <Link to="/AdminDashboard" onClick={() => setIsOpen(false)}>
-            Dashboard
-          </Link>
-        )}
+        {!isAuth && <Link to="/admin" onClick={() => setIsOpen(false)}>Admin</Link>}
 
         {isAuth && (
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "18px 30px",
-              background: "red",
-              color: "#fff",
-              border: "none",
-              textAlign: "left",
-              cursor: "pointer"
-            }}
-          >
-            Logout
-          </button>
+          <>
+            <Link to="/admin-dashboard" onClick={() => setIsOpen(false)}>
+              Dashboard
+            </Link>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </>
         )}
       </div>
 
+      {/* STYLES */}
       <style>{`
         body {
           margin: 0;
+          padding-top: 80px; /* FIX: prevents layout jump */
         }
 
         .header {
@@ -132,12 +119,10 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
           top: 0;
           width: 100%;
           height: 80px;
-          display: flex;
-          align-items: center;
           background: rgba(255,255,255,0.95);
           backdrop-filter: blur(10px);
-          transition: 0.3s ease;
           z-index: 1000;
+          transition: 0.3s;
         }
 
         .sticky {
@@ -145,7 +130,9 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
         }
 
         .nav-container {
-          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          height: 100%;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -154,26 +141,35 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
 
         .logo-img {
           height: 45px;
-          object-fit: contain;
         }
 
         .desktop-nav {
           display: flex;
-          gap: 25px;
+          gap: 18px;
           align-items: center;
+          justify-content: flex-end;
+          flex: 1;
         }
 
         .desktop-nav a {
           text-decoration: none;
-          color: inherit;
+          color: #333;
           font-weight: 500;
-          transition: 0.3s;
+          padding: 8px 12px;
+          border-radius: 6px;
+          transition: 0.2s;
         }
 
-        .desktop-nav a:hover,
-        .active {
+        .desktop-nav a:hover {
+          background: rgba(13,110,253,0.08);
           color: #0d6efd;
-          font-weight: 600;
+        }
+
+        /* FIX: no layout shift */
+        .active {
+          background: #0d6efd;
+          color: #fff !important;
+          font-weight: 500;
         }
 
         .logout-btn {
@@ -190,7 +186,6 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
           font-size: 24px;
           background: none;
           border: none;
-          cursor: pointer;
         }
 
         .mobile-menu {
@@ -203,10 +198,8 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
           display: flex;
           flex-direction: column;
           padding-top: 90px;
-          box-shadow: -5px 0 20px rgba(0,0,0,0.1);
           transform: translateX(100%);
-          transition: transform 0.4s cubic-bezier(.77,0,.18,1);
-          z-index: 1001;
+          transition: 0.3s;
         }
 
         .mobile-menu.open {
@@ -215,15 +208,9 @@ const InnerHeader = ({ isAuth, setIsAuth }) => {
 
         .mobile-menu a {
           padding: 18px 30px;
+          border-bottom: 1px solid #eee;
           text-decoration: none;
-          color: inherit;
-          font-size: 18px;
-          border-bottom: 1px solid rgba(0,0,0,0.05);
-          transition: 0.3s ease;
-        }
-
-        .mobile-menu a:hover {
-          background: rgba(13,110,253,0.1);
+          color: #333;
         }
 
         @media (max-width: 768px) {

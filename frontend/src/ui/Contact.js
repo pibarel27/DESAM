@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import InnerHeaderBanner from "../components/InnerHeaderBanner";
-import InnerHeader from "../components/InnerHeader";
-import Footer from "../components/Footer";
+// import InnerHeaderBanner from "../components/InnerHeaderBanner";
+// import InnerHeader from "../components/InnerHeader";
+// import Footer from "../components/Footer";
 import contactHeader from "../img/contact-header.jpg";
 import emailjs from "emailjs-com";
 
@@ -65,8 +65,8 @@ const Contact = () => {
 
   return (
     <>
-      <InnerHeader />
-      <InnerHeaderBanner name={"Contact Us"} img={contactHeader} />
+      {/* <InnerHeader />
+      <InnerHeaderBanner name={"Contact Us"} img={contactHeader} /> */}
       <main id="main">
         <section id="contact" className="contact">
           <div className="container position-relative" data-aos="fade-up">
@@ -178,7 +178,7 @@ const Contact = () => {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

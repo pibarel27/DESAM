@@ -10,7 +10,7 @@ const Facts = () => {
             <div className="col-lg-12 text-center">
               <div className="section-header">
                 <h2 className="text-white">Our Footprints</h2>
-                <p>Delivering service excellence to over 43 million Happy Customers across geography… </p>
+                <p className="text-white">Delivering service excellence to over 43 million Happy Customers across geography… </p>
               </div>
               <div className="row counters">
                 <div className="col-lg-4 col-6 text-center">

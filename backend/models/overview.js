@@ -20,6 +20,6 @@ const overviewSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const introModel = mongoose.model("overview", overviewSchema);
+const overviewModel = mongoose.model("overview", overviewSchema);
 
-module.exports = introModel;
+module.exports = overviewModel;

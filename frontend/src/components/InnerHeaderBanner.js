@@ -80,7 +80,7 @@ const InnerHeader = () => {
               Home
             </Link>
             <Link to="/about" className={splitLocation[1] === "about" ? "active" : ""}>
-              About Us
+              About
             </Link>
             <Link to="/services" className={splitLocation[1] === "services" ? "active" : ""}>
               Services
@@ -89,7 +89,7 @@ const InnerHeader = () => {
               Careers
             </Link>
             <Link to="/contact" className={splitLocation[1] === "contact" ? "active" : ""}>
-              Contact Us
+              Contact
             </Link>
 
             {!isAuth && <Link to="/admin">Admin</Link>}

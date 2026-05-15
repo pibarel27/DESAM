@@ -1,152 +1,151 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function AdminForgotPassword() {
   const navigate = useNavigate();
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   const [email, setEmail] = useState("");
-  const [enteredOtp, setEnteredOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
-  const [stage, setStage] = useState("request");
-  const [status, setStatus] = useState("");
-  const [countdown, setCountdown] = useState(0);
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
 
-  const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
+  const [stage, setStage] = useState("request"); 
+  const [loading, setLoading] = useState(false);
 
-  const startCountdown = () => {
-    setCountdown(60);
-  };
-
-  const handleSubmit = (e) => {
+  // STEP 1: Send OTP
+  const handleSendOtp = async (e) => {
     e.preventDefault();
 
-    if (!email.trim()) {
-      setStatus("Please enter your email address.");
-      return;
-    }
+    try {
+      setLoading(true);
 
-    const otp = generateOtp();
-    setGeneratedOtp(otp);
-    setStage("verify");
-    setStatus(`OTP sent to ${email}. Please enter the 6-digit code.`);
-    setEnteredOtp("");
-    startCountdown();
-
-    // For demo purposes only: log OTP to console
-    console.log("Admin OTP:", otp);
-  };
-
-  const handleVerify = (e) => {
-    e.preventDefault();
-
-    if (!enteredOtp.trim()) {
-      setStatus("Please enter the OTP.");
-      return;
-    }
-
-    if (enteredOtp !== generatedOtp) {
-      setStatus("OTP is incorrect. Please try again.");
-      return;
-    }
-
-    setStatus("OTP verified. You can now log in with your password.");
-    setTimeout(() => navigate("/admin"), 1200);
-  };
-
-  const handleResend = () => {
-    if (countdown > 0) {
-      return;
-    }
-
-    const otp = generateOtp();
-    setGeneratedOtp(otp);
-    setStatus(`A new OTP has been sent to ${email}.`);
-    setEnteredOtp("");
-    startCountdown();
-
-    console.log("Resent Admin OTP:", otp);
-  };
-
-  useEffect(() => {
-    if (countdown <= 0) {
-      return;
-    }
-
-    const timerId = window.setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          window.clearInterval(timerId);
-          return 0;
-        }
-        return prev - 1;
+      const res = await axios.post(`${backendUrl}/api/admin/auth/forgot-password`, {
+        email,
       });
-    }, 1000);
 
-    return () => window.clearInterval(timerId);
-  }, [countdown]);
+      toast.success(res.data.message || "OTP sent to your email");      
+
+      setStage("verify");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Error sending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // STEP 2: Reset Password
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(`${backendUrl}/api/admin/auth/reset-password`, {
+        email,
+        otp,
+        password,
+      });
+
+      toast.success(res.data.message || "Password reset successful");
+
+
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1200);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Invalid OTP or error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Resend OTP
+  const handleResendOtp = async () => {
+    try {
+      const res = await axios.post(`${backendUrl}/api/admin/auth/resend-otp`, {
+        email,
+      });
+
+      toast.success(res.data.message || "OTP resent successfully");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Error resending OTP");
+    }
+  };
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
         <h1 style={styles.logo}>Forgot Password</h1>
+
         <p style={styles.hint}>
           {stage === "request"
-            ? "Enter your admin email address and we will send an OTP to verify your identity."
-            : "Enter the 6-digit OTP sent to your email."}
+            ? "Enter your email to receive OTP"
+            : "Enter OTP and new password"}
         </p>
 
-        {stage === "request" ? (
-          <form onSubmit={handleSubmit}>
+        {/* STEP 1 */}
+        {stage === "request" && (
+          <form onSubmit={handleSendOtp}>
             <input
               type="email"
               placeholder="Email address"
               style={styles.input}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
+              required
             />
-            <button type="submit" style={styles.button}>
-              Send OTP
+
+            <button style={styles.button} disabled={loading}>
+              {loading ? "Sending..." : "Send OTP"}
             </button>
           </form>
-        ) : (
-          <>
-            <form onSubmit={handleVerify}>
-              <div style={styles.emailHint}>OTP sent to: {email}</div>
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                style={styles.input}
-                value={enteredOtp}
-                onChange={(e) => setEnteredOtp(e.target.value)}
-                maxLength={6}
-                autoComplete="one-time-code"
-              />
-              <button type="submit" style={styles.button}>
-                Enter
-              </button>
-            </form>
-            <button
-              type="button"
-              onClick={handleResend}
-              style={{
-                ...styles.button,
-                backgroundColor: countdown > 0 ? "#999" : "#0095f6",
-                cursor: countdown > 0 ? "not-allowed" : "pointer",
-              }}
-              disabled={countdown > 0}
-            >
-              {countdown > 0 ? `Resend OTP in ${countdown}s` : "Resend OTP"}
-            </button>
-          </>
         )}
 
-        <button type="button" onClick={() => navigate("/admin")} style={styles.secondaryButton}>
+        {/* STEP 2 */}
+        {stage === "verify" && (
+          <form onSubmit={handleResetPassword}>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              style={styles.input}
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+
+            <input
+              type="password"
+              placeholder="New Password"
+              style={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <button style={styles.button} disabled={loading}>
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
+
+            <button
+              type="button"
+              style={styles.secondaryButton}
+              onClick={handleResendOtp}
+            >
+              Resend OTP
+            </button>
+          </form>
+        )}
+
+        <button
+          type="button"
+          onClick={() => navigate("/admin")}
+          style={styles.secondaryButton}
+        >
           Back to Login
         </button>
 
-        {status && <div style={styles.status}>{status}</div>}
       </div>
     </div>
   );
@@ -177,13 +176,6 @@ const styles = {
     fontSize: "13px",
     color: "#666",
     marginBottom: "20px",
-    lineHeight: 1.4,
-  },
-  emailHint: {
-    fontSize: "13px",
-    color: "#111",
-    marginBottom: "10px",
-    textAlign: "left",
   },
   input: {
     width: "100%",
@@ -218,7 +210,6 @@ const styles = {
     marginTop: "10px",
     fontSize: "14px",
     color: "#333",
-    lineHeight: 1.4,
   },
 };
 
